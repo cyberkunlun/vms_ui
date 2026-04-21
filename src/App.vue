@@ -7,6 +7,7 @@ import LiveMonitor from './views/LiveMonitor.vue'
 import VideoPlayback from './views/VideoPlayback.vue'
 import VideoWall from './views/VideoWall.vue'
 import SystemManagement from './views/SystemManagement.vue'
+import FaceAlarmCenter from './views/surveillance/alarms/FaceAlarmCenter.vue'
 
 // Element Plus icon components
 import {
@@ -64,7 +65,8 @@ const menuItems = [
     label: 'Surveillance Center',
     children: [
       { id: 'surveillance-task', label: 'Surveillance Task', icon: View, component: LiveMonitor },
-      { id: 'alarm', label: 'Alarm', icon: Bell, component: EventWarning },
+      { id: 'alarm', label: 'Alarm', icon: Bell, component: FaceAlarmCenter },
+      { id: 'realtime', label: 'Real-Time', icon: Bell, component: EventWarning },
     ]
   },
   {
