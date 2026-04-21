@@ -9,6 +9,7 @@ import VideoWall from './views/VideoWall.vue'
 import SystemManagement from './views/SystemManagement.vue'
 import FaceAlarmCenter from './views/surveillance/alarms/FaceAlarmCenter.vue'
 import SurveillanceTaskList from './views/surveillance/tasks/SurveillanceTaskList.vue'
+import VehicleAlarmCenter from './views/surveillance/alarms/VehicleAlarmCenter.vue'
 
 // Element Plus icon components
 import {
@@ -31,7 +32,8 @@ import {
   Search,
   View,
   Aim,
-  Avatar
+  Avatar,
+  Van
 } from '@element-plus/icons-vue'
 
 // 主菜单项（支持二级菜单）
@@ -66,7 +68,8 @@ const menuItems = [
     label: 'Surveillance Center',
     children: [
       { id: 'surveillance-task', label: 'Surveillance Task', icon: View, component: SurveillanceTaskList },
-      { id: 'alarm', label: 'Alarm', icon: Bell, component: FaceAlarmCenter },
+      { id: 'face-alarm', label: 'Face Alarm', icon: Bell, component: FaceAlarmCenter },
+      { id: 'vehicle-alarm', label: 'Vehicle Alarm', icon: Van, component: VehicleAlarmCenter },
       { id: 'realtime', label: 'Real-Time', icon: Bell, component: EventWarning },
     ]
   },
