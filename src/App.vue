@@ -9,6 +9,7 @@ import VideoWall from './views/VideoWall.vue'
 import SystemManagement from './views/SystemManagement.vue'
 import FaceAlarmCenter from './views/surveillance/alarms/FaceAlarmCenter.vue'
 import SurveillanceTaskList from './views/surveillance/tasks/SurveillanceTaskList.vue'
+import VehicleTaskList from './views/surveillance/tasks/VehicleTaskList.vue'
 import VehicleAlarmCenter from './views/surveillance/alarms/VehicleAlarmCenter.vue'
 import UnifiedAlarmCenter from './views/surveillance/alarms/UnifiedAlarmCenter.vue'
 
@@ -69,6 +70,7 @@ const menuItems = [
     label: 'Surveillance Center',
     children: [
       { id: 'surveillance-task', label: 'Surveillance Task', icon: View, component: SurveillanceTaskList },
+      { id: 'vehicle-task', label: 'Vehicle Task', icon: Van, component: VehicleTaskList },
       { id: 'face-alarm', label: 'Face Alarm', icon: Bell, component: UnifiedAlarmCenter },
       { id: 'vehicle-alarm', label: 'Vehicle Alarm', icon: Van, component: UnifiedAlarmCenter },
       { id: 'realtime', label: 'Real-Time', icon: Bell, component: EventWarning },
@@ -150,7 +152,9 @@ const currentViewTab = computed(() => {
     'user-mgmt': 'user',
     'role-mgmt': 'role',
     'dept-mgmt': 'dept',
-    'log-audit': 'log'
+    'log-audit': 'log',
+    'face-alarm': 'face-alarm',
+    'vehicle-alarm': 'vehicle-alarm'
   }
   return tabMap[currentView.value] || 'user'
 })
