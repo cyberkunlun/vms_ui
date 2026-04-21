@@ -6,6 +6,7 @@ import EventWarning from './views/EventWarning.vue'
 import LiveMonitor from './views/LiveMonitor.vue'
 import VideoPlayback from './views/VideoPlayback.vue'
 import VideoWall from './views/VideoWall.vue'
+import SystemManagement from './views/SystemManagement.vue'
 
 // Element Plus icon components
 import {
@@ -23,62 +24,83 @@ import {
   Document,
   FullScreen,
   Location,
-  WarningFilled
+  WarningFilled,
+  House,
+  Search,
+  View,
+  Aim,
+  Avatar
 } from '@element-plus/icons-vue'
-
-// 系统管理子页面组件（简约美观）
-const UserManagement = {
-  name: 'UserManagement',
-  template: `
-    <div class="page-container">
-      <div class="page-header"><h2>用户管理</h2><p>管理系统用户账号与权限</p></div>
-      <div class="card-grid">
-        <div class="stat-card"><div class="stat-icon">👥</div><div class="stat-info"><div class="stat-value">24</div><div class="stat-label">总用户数</div></div></div>
-        <div class="stat-card"><div class="stat-icon">🟢</div><div class="stat-info"><div class="stat-value">18</div><div class="stat-label">活跃用户</div></div></div>
-        <div class="stat-card"><div class="stat-icon">🔒</div><div class="stat-info"><div class="stat-value">6</div><div class="stat-label">管理员</div></div></div>
-      </div>
-      <div class="data-table"><div class="table-header"><div>用户名</div><div>角色</div><div>状态</div><div>最后登录</div></div>
-      <div class="table-row"><div>admin</div><div>超级管理员</div><div>🟢 正常</div><div>2024-01-15</div></div>
-      <div class="table-row"><div>operator1</div><div>操作员</div><div>🟢 正常</div><div>2024-01-14</div></div>
-      <div class="table-row"><div>viewer1</div><div>访客</div><div>🟡 停用</div><div>2024-01-10</div></div></div>
-    </div>
-  `
-}
-const RoleManagement = {
-  name: 'RoleManagement',
-  template: `<div class="page-container"><div class="page-header"><h2>角色权限</h2><p>配置角色及权限策略</p></div><div class="role-list"><div class="role-item"><span>🔑 超级管理员</span><span class="role-badge">全部权限</span></div><div class="role-item"><span>📹 监控主管</span><span class="role-badge">监控管理</span></div><div class="role-item"><span>👁️ 巡检员</span><span class="role-badge">回放/预览</span></div><div class="role-item"><span>📊 访客</span><span class="role-badge">仅查看</span></div></div></div>`
-}
-const SystemSettings = {
-  name: 'SystemSettings',
-  template: `<div class="page-container"><div class="page-header"><h2>系统设置</h2><p>全局参数与偏好配置</p></div><div class="settings-group"><div class="setting-item"><span>🌙 深色模式</span><span class="toggle-switch"></span></div><div class="setting-item"><span>🔔 消息通知</span><span class="toggle-switch active"></span></div><div class="setting-item"><span>📀 录像保留天数</span><span class="setting-value">30天</span></div><div class="setting-item"><span>🌐 API 地址</span><span class="setting-value">https://api.vms.local</span></div></div></div>`
-}
-const AuditLog = {
-  name: 'AuditLog',
-  template: `<div class="page-container"><div class="page-header"><h2>审计日志</h2><p>系统操作记录追踪</p></div><div class="log-timeline"><div class="log-entry"><span class="log-time">10:32</span> 管理员修改了用户权限</div><div class="log-entry"><span class="log-time">09:15</span> 系统配置已备份</div><div class="log-entry"><span class="log-time">昨日</span> 新增监控点位配置</div></div></div>`
-}
-
-// 二级子菜单定义
-const systemSubMenus = [
-  { id: 'user-mgmt', label: '用户管理', icon: User, component: UserManagement },
-  { id: 'role-mgmt', label: '角色权限', icon: Lock, component: RoleManagement },
-  { id: 'sys-settings', label: '系统设置', icon: Operation, component: SystemSettings },
-  { id: 'audit-log', label: '审计日志', icon: Document, component: AuditLog }
-]
 
 // 主菜单项（支持二级菜单）
 const menuItems = [
-  { id: 'main', icon: DataLine, label: '主仪表板', component: Dashboard },
-  { id: 'case', icon: FolderOpened, label: '智能作战中心', component: CaseHandlingDashboard },
-  { id: 'event', icon: Bell, label: '事件预警', component: EventWarning },
-  { id: 'monitor', icon: VideoCamera, label: '实时监控', component: LiveMonitor },
-  { id: 'playback', icon: RefreshRight, label: '录像回放', component: VideoPlayback },
-  { id: 'wall', icon: Grid, label: '视频墙', component: VideoWall },
-  // 系统管理：带二级菜单
-  { id: 'system', icon: Setting, label: '系统管理', children: systemSubMenus }
+  { id: 'home', icon: House, label: 'Home', component: CaseHandlingDashboard },
+  { id: 'dashboard', icon: DataLine, label: 'Dashboard', component: Dashboard },
+  { 
+    id: 'vms', 
+    icon: VideoCamera, 
+    label: 'VMS', 
+    children: [
+      { id: 'video-wall', label: 'Video Wall', icon: Grid, component: VideoWall },
+      { id: 'video-playback', label: 'Video Playback', icon: RefreshRight, component: VideoPlayback },
+      { id: 'smart-monitor', label: 'Smart Monitor', icon: VideoCamera, component: LiveMonitor },
+    ]
+  },
+  {
+    id: 'retrieval',
+    icon: Search,
+    label: 'retrieval center',
+    children: [
+      { id: 'face-body-capture', label: 'Face/Body Capture Retrieval', icon: Search, component: CaseHandlingDashboard },
+      { id: 'vehicle-capture', label: 'Vehicle Capture Retrieval', icon: Search, component: CaseHandlingDashboard },
+      { id: 'fusion-retrieval', label: 'Fusion Retrieval', icon: Search, component: CaseHandlingDashboard },
+      { id: 'face-body-archives', label: 'Face/Body Archives Retrieval', icon: Search, component: CaseHandlingDashboard },
+      { id: 'vehicle-archives', label: 'Vehicle Archives Retrieval', icon: Search, component: CaseHandlingDashboard },
+    ]
+  },
+  {
+    id: 'surveillance',
+    icon: View,
+    label: 'Surveillance Center',
+    children: [
+      { id: 'surveillance-task', label: 'Surveillance Task', icon: View, component: LiveMonitor },
+      { id: 'alarm', label: 'Alarm', icon: Bell, component: EventWarning },
+    ]
+  },
+  {
+    id: 'tactics',
+    icon: Aim,
+    label: 'Tactics Application',
+    children: [
+      { id: 'space-time-collision', label: 'Space-time collision', icon: Aim, component: CaseHandlingDashboard },
+      { id: 'offline-video', label: 'Offline Video Analysis', icon: Aim, component: CaseHandlingDashboard },
+      { id: 'key-area', label: 'Key Area', icon: Aim, component: CaseHandlingDashboard },
+    ]
+  },
+  {
+    id: 'ai-event',
+    icon: Bell,
+    label: 'AI Event Center',
+    children: [
+      { id: 'ai-event-item', label: 'AI Event', icon: Bell, component: EventWarning },
+      { id: 'full-text-search', label: 'Full-text Search', icon: Search, component: CaseHandlingDashboard },
+    ]
+  },
+  {
+    id: 'system',
+    icon: Setting,
+    label: 'System Management',
+    children: [
+      { id: 'user-mgmt', label: 'User Management', icon: User, component: SystemManagement },
+      { id: 'role-mgmt', label: 'Role Management', icon: Lock, component: SystemManagement },
+      { id: 'dept-mgmt', label: 'Department Management', icon: Avatar, component: SystemManagement },
+      { id: 'log-audit', label: 'Log Audit', icon: Document, component: SystemManagement },
+    ]
+  }
 ]
 
-const openedViews = ref<string[]>(['case']) // 默认打开
-const currentView = ref('case')
+const openedViews = ref<string[]>(['dashboard']) // 默认打开
+const currentView = ref('dashboard')
 const sidebarCollapsed = ref(true)
 
 // 子菜单浮层相关状态
@@ -108,11 +130,22 @@ const findComponentById = (id: string): any => {
       if (child) return child.component
     }
   }
-  return EventWarning
+  return Dashboard
 }
 
 const currentComponent = computed(() => {
   return findComponentById(currentView.value)
+})
+
+// 为 SystemManagement 提供 tab 属性
+const currentViewTab = computed(() => {
+  const tabMap: Record<string, string> = {
+    'user-mgmt': 'user',
+    'role-mgmt': 'role',
+    'dept-mgmt': 'dept',
+    'log-audit': 'log'
+  }
+  return tabMap[currentView.value] || 'user'
 })
 
 const pageTitle = computed(() => {
@@ -123,7 +156,7 @@ const pageTitle = computed(() => {
       if (child) return child.label
     }
   }
-  return 'VMS 智能管理'
+  return 'VMS Management'
 })
 
 const switchView = (viewId: string) => {
@@ -271,8 +304,8 @@ const showAlertPanel = () => {
       <div class="sidebar-header">
         <div class="logo-circle">V</div>
         <div v-show="!sidebarCollapsed" class="sidebar-title">
-          <h1>VMS Suite</h1>
-          <p>智能视频管理</p>
+          <h1>VMS Platform</h1>
+          <p>Intelligence Center</p>
         </div>
         <button @click="toggleSidebar" class="collapse-toggle" :title="sidebarCollapsed ? '展开菜单' : '收起菜单'">
           <svg v-if="sidebarCollapsed" viewBox="0 0 24 24" fill="none">
@@ -348,8 +381,8 @@ const showAlertPanel = () => {
               <div class="user-mini-horizontal">
               <div class="avatar-mini">👤</div>
               <div class="user-info">
-                <div class="user-name">管理员</div>
-                <div class="user-role">系统管理员</div>
+                <div class="user-name">Administrator</div>
+                <div class="user-role">System Admin</div>
               </div>
             </div>
             </div>
@@ -358,7 +391,7 @@ const showAlertPanel = () => {
       </header>
       <div class="view-shell">
         <transition name="fade-slide" mode="out-in">
-          <component :is="currentComponent" :key="currentView" />
+          <component :is="currentComponent" :key="currentView" :initialTab="currentViewTab" />
         </transition>
       </div>
     </main>

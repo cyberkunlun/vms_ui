@@ -1,16 +1,26 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
-const activeMenu = ref('device') // device, area, user, role, dept
+const props = defineProps<{
+  initialTab?: string
+}>()
+
+const activeMenu = ref(props.initialTab || 'user')
+
+watch(() => props.initialTab, (newTab) => {
+  if (newTab) {
+    activeMenu.value = newTab
+  }
+})
 
 const menus = [
-  { label: '设备管理', value: 'device', icon: '' },
-  { label: '区域管理', value: 'area', icon: '' },
-  { label: '人员管理', value: 'user', icon: '' },
-  { label: '角色管理', value: 'role', icon: '' },
-  { label: '部门管理', value: 'dept', icon: '' },
-  { label: '权限管理', value: 'perm', icon: '' },
-  { label: '菜单管理', value: 'menu', icon: '' }
+  { label: 'User Management', value: 'user', icon: '👥' },
+  { label: 'Role Management', value: 'role', icon: '🔐' },
+  { label: 'Department Management', value: 'dept', icon: '🏢' },
+  { label: 'Log Audit', value: 'log', icon: '📑' },
+  { label: 'Device Management', value: 'device', icon: '📹' },
+  { label: 'Region Management', value: 'area', icon: '🌍' },
+  { label: 'Menu Management', value: 'menu', icon: '📜' }
 ]
 
 // Mock Data for Area
@@ -57,6 +67,12 @@ const permPlanData = [
   { code: 118, name: 'ISS_PLAN', status: 'Enable' },
   { code: 113, name: 'RO_PLAN', status: 'Enable' },
   { code: 111, name: 'ROP_PLAN', status: 'Enable' }
+]
+
+const logData = [
+  { id: 1, user: 'admin', type: 'Login', module: 'System', content: 'User admin logged in successfully', ip: '192.168.1.100', time: '2024-01-15 10:32:45' },
+  { id: 2, user: 'operator1', type: 'Update', module: 'Device', content: 'Modified device Gate3-Exit parameters', ip: '192.168.1.105', time: '2024-01-15 11:15:20' },
+  { id: 3, user: 'admin', type: 'Delete', module: 'User', content: 'Deleted user viewer2', ip: '192.168.1.100', time: '2024-01-14 15:20:10' }
 ]
 
 const showPermModal = ref(false)
@@ -258,6 +274,32 @@ const openPermConfig = (plan: any) => {
                 <button class="op-btn edit" @click="openPermConfig(item)">Modify</button>
                 <button class="op-btn delete">Delete</button>
               </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Log Audit Table -->
+        <table v-if="activeMenu === 'log'" class="mgmt-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Operator</th>
+              <th>Action Type</th>
+              <th>Module</th>
+              <th>Content</th>
+              <th>IP Address</th>
+              <th>Operation Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="item in logData" :key="item.id">
+              <td>{{ item.id }}</td>
+              <td>{{ item.user }}</td>
+              <td><span class="type-tag customization">{{ item.type }}</span></td>
+              <td>{{ item.module }}</td>
+              <td>{{ item.content }}</td>
+              <td>{{ item.ip }}</td>
+              <td>{{ item.time }}</td>
             </tr>
           </tbody>
         </table>
