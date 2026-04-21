@@ -66,12 +66,19 @@ watch(() => props.initialTab, (newTab) => {
 }
 
 .unified-page-header {
-  padding: 12px 20px;
+  padding: 6px 16px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid rgba(148, 163, 184, 0.1);
-  background: rgba(15, 23, 42, 0.2);
+  background: rgba(15, 23, 42, 0.1);
+}
+
+.module-content {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  padding-top: 8px; /* Maintain a small, elegant gap */
 }
 
 .header-left {

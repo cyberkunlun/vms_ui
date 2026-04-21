@@ -236,7 +236,7 @@ defineProps<{
   border-right: 1px solid rgba(148, 163, 184, 0.1);
   display: flex;
   flex-direction: column;
-  padding: 16px;
+  padding: 8px 16px 16px 16px;
   border-radius: 16px;
   margin-right: 12px;
 }
