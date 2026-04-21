@@ -1,0 +1,45 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": { "name": "Main Building", "height": 30, "type": "building" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [58.388, 23.592], [58.395, 23.592], [58.395, 23.588], [58.388, 23.588], [58.388, 23.592]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "North Wing", "height": 20, "type": "building" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [58.390, 23.595], [58.393, 23.595], [58.393, 23.592], [58.390, 23.592], [58.390, 23.595]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "South Wing", "height": 20, "type": "building" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [58.390, 23.588], [58.393, 23.588], [58.393, 23.585], [58.390, 23.585], [58.390, 23.588]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Parking Area", "height": 5, "type": "structure" },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [58.385, 23.590], [58.388, 23.590], [58.388, 23.585], [58.385, 23.585], [58.385, 23.590]
+        ]]
+      }
+    }
+  ]
+}

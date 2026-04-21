@@ -1,0 +1,43 @@
+:root {
+  --bg-color: #010816;
+  --panel-bg: rgba(0, 20, 40, 0.5);
+  --primary-cyan: #00f7ff;
+  --primary-blue: #0078ff;
+  --accent-red: #ff4b4b;
+  --text-main: #e0f2ff;
+  --text-secondary: rgba(224, 242, 255, 0.7);
+}
+
+#app {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 50%, #0a1a3a 0%, #010816 100%);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 247, 255, 0.2);
+  border-radius: 2px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
