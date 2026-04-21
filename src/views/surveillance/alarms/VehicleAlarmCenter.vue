@@ -69,6 +69,10 @@ const alarms = ref<VehicleAlarm[]>([
 ])
 
 const activeTab = ref('All Status')
+
+defineProps<{
+  hideTitle?: boolean
+}>()
 </script>
 
 <template>
@@ -129,7 +133,7 @@ const activeTab = ref('All Status')
 
     <!-- Main Content Area -->
     <main class="alarm-content-main">
-      <header class="main-header">
+      <header class="main-header" v-if="!hideTitle">
         <div class="header-info">
           <h1 class="title">Vehicle Alarm Center</h1>
           <p class="subtitle"><span class="count">5</span> active vehicle alarms requiring attention</p>
@@ -219,7 +223,7 @@ const activeTab = ref('All Status')
 .vehicle-alarm-page {
   display: flex;
   height: 100%;
-  background: #020617;
+  background: transparent;
   color: #fff;
   overflow: hidden;
 }
@@ -227,17 +231,24 @@ const activeTab = ref('All Status')
 /* Sidebar */
 .alarm-filters-sidebar {
   width: 240px;
-  background: #0f172a;
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(12px);
   border-right: 1px solid rgba(148, 163, 184, 0.1);
   display: flex;
   flex-direction: column;
-  padding: 20px 16px;
+  padding: 16px;
+  border-radius: 16px;
+  margin-right: 12px;
 }
 
 .sidebar-title {
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: 700;
+  color: #38bdf8;
   margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .filter-sections {
@@ -249,21 +260,23 @@ const activeTab = ref('All Status')
   .filter-item {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    label { font-size: 12px; color: #94a3b8; }
+    gap: 6px;
+    label { font-size: 11px; color: #94a3b8; font-weight: 500; }
   }
 }
 
 .cyber-input, .cyber-select {
   width: 100%;
-  background: #1e293b;
-  border: 1px solid rgba(148, 163, 184, 0.2);
-  border-radius: 6px;
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  border-radius: 8px;
   padding: 8px 12px;
   color: #fff;
   font-size: 13px;
   outline: none;
-  &:focus { border-color: #38bdf8; }
+  transition: all 0.2s;
+  &:focus { border-color: #38bdf8; box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.1); }
+  &::placeholder { color: #64748b; }
 }
 
 .time-input-wrap {
@@ -277,7 +290,6 @@ const activeTab = ref('All Status')
     font-size: 14px;
   }
 }
-.mt-2 { margin-top: 4px; }
 
 .sidebar-actions {
   display: flex;
@@ -286,32 +298,33 @@ const activeTab = ref('All Status')
 
   .btn-search {
     flex: 1;
-    background: #3b82f6;
+    background: linear-gradient(135deg, #0ea5e9, #38bdf8);
     color: #fff;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     padding: 10px;
-    font-size: 14px;
-    font-weight: 500;
+    font-size: 13px;
+    font-weight: 600;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    &:hover { background: #2563eb; }
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+    &:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(14, 165, 233, 0.4); }
   }
 
   .btn-reset {
     width: 42px;
-    background: transparent;
+    background: rgba(148, 163, 184, 0.05);
     border: 1px solid rgba(148, 163, 184, 0.2);
     color: #cbd5e1;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    &:hover { background: rgba(148, 163, 184, 0.1); }
+    &:hover { background: rgba(148, 163, 184, 0.1); border-color: #38bdf8; color: #38bdf8; }
   }
 }
 
@@ -320,55 +333,67 @@ const activeTab = ref('All Status')
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 20px;
+  padding: 0 4px;
   overflow-y: auto;
 
-  &::-webkit-scrollbar { width: 6px; }
-  &::-webkit-scrollbar-thumb { background: rgba(56, 189, 248, 0.2); border-radius: 3px; }
+  &::-webkit-scrollbar { width: 4px; }
+  &::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.2); border-radius: 4px; }
 }
 
 .main-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
+  align-items: flex-end;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.08);
 
-  .title { font-size: 24px; font-weight: 600; margin: 0; }
-  .subtitle { font-size: 14px; color: #94a3b8; margin: 6px 0 0; }
+  .title { font-size: 20px; font-weight: 700; color: #f1f5f9; margin: 0; }
+  .subtitle { font-size: 13px; color: #94a3b8; margin: 4px 0 0; }
   .count { color: #f87171; font-weight: 700; }
 
   .header-btns {
     display: flex;
-    gap: 12px;
+    gap: 10px;
   }
 }
 
 .btn-header-ghost {
-  background: transparent;
-  border: 1px solid rgba(148, 163, 184, 0.2);
-  color: #fff;
+  background: rgba(30, 41, 59, 0.4);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  color: #cbd5e1;
   padding: 8px 16px;
-  border-radius: 6px;
-  font-size: 13px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
   cursor: pointer;
-  &:hover { background: rgba(148, 163, 184, 0.1); border-color: #38bdf8; }
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  &:hover { background: rgba(56, 189, 248, 0.1); border-color: #38bdf8; color: #fff; }
 }
 
 /* Alarm Card */
 .alarm-cards-list {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
 }
 
 .alarm-card {
   display: flex;
-  background: rgba(15, 23, 42, 0.6);
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(8px);
   border: 1px solid rgba(148, 163, 184, 0.1);
-  border-radius: 12px;
+  border-radius: 20px;
   overflow: hidden;
-  transition: all 0.2s;
-  &:hover { border-color: rgba(56, 189, 248, 0.3); }
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  &:hover { 
+    border-color: rgba(56, 189, 248, 0.4); 
+    background: rgba(15, 23, 42, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+  }
 }
 
 .card-image-wrap {
@@ -378,24 +403,26 @@ const activeTab = ref('All Status')
 
   .plate-badge {
     position: absolute;
-    top: 12px;
-    left: 12px;
-    background: #3b82f6;
+    top: 16px;
+    left: 16px;
+    background: rgba(14, 165, 233, 0.9);
+    backdrop-filter: blur(4px);
     color: #fff;
-    padding: 4px 12px;
-    border-radius: 4px;
+    padding: 6px 14px;
+    border-radius: 8px;
     font-weight: 700;
     font-size: 16px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.15);
   }
 
   .status-badges-overlay {
     position: absolute;
-    top: 12px;
-    right: 12px;
+    top: 16px;
+    right: 16px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
     align-items: flex-end;
   }
 }
@@ -404,18 +431,19 @@ const activeTab = ref('All Status')
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 11px;
-  font-weight: 700;
-  border: 1px solid currentColor;
+  padding: 4px 14px;
+  border-radius: 30px;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
   
-  .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
 
-  &.critical { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
-  &.high { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
-  &.pending { background: rgba(234, 179, 8, 0.2); color: #eab308; }
-  &.verified { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+  &.critical { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+  &.high { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+  &.pending { background: rgba(234, 179, 8, 0.15); color: #fbbf24; border: 1px solid rgba(234, 179, 8, 0.3); }
+  &.verified { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
 }
 
 .card-info-content {
@@ -426,15 +454,16 @@ const activeTab = ref('All Status')
   gap: 16px;
 }
 
-.alarm-title { font-size: 18px; font-weight: 600; margin: 0; color: #f8fafc; }
+.alarm-title { font-size: 18px; font-weight: 700; margin: 0; color: #f8fafc; }
 .meta-row {
   display: flex;
   align-items: center;
   font-size: 13px;
   color: #94a3b8;
-  margin-top: 6px;
-  .meta-item { display: flex; align-items: center; gap: 6px; }
+  margin-top: 4px;
+  .meta-item { display: flex; align-items: center; gap: 8px; }
   .ml-4 { margin-left: 24px; }
+  .el-icon { color: #38bdf8; }
 }
 
 .info-grid {
@@ -443,72 +472,77 @@ const activeTab = ref('All Status')
   gap: 16px;
 
   .grid-cell {
-    .label { font-size: 11px; color: #64748b; text-transform: uppercase; margin-bottom: 4px; }
+    .label { font-size: 10px; color: #64748b; text-transform: uppercase; margin-bottom: 4px; letter-spacing: 0.5px; }
     .value { font-size: 14px; font-weight: 600; color: #e2e8f0; }
   }
 }
 
 .alarm-details-box {
-  background: rgba(15, 23, 42, 0.8);
-  border-radius: 8px;
-  padding: 12px 16px;
-  border: 1px solid rgba(148, 163, 184, 0.1);
+  background: rgba(10, 15, 30, 0.4);
+  border-radius: 12px;
+  padding: 14px 18px;
+  border: 1px solid rgba(148, 163, 184, 0.08);
 
-  .box-label { font-size: 11px; color: #64748b; margin-bottom: 6px; }
-  .box-text { font-size: 13px; color: #cbd5e1; margin: 0; line-height: 1.5; }
+  .box-label { font-size: 10px; color: #475569; margin-bottom: 6px; font-weight: 600; text-transform: uppercase; }
+  .box-text { font-size: 13px; color: #94a3b8; margin: 0; line-height: 1.6; }
 }
 
 .card-actions-rail {
   width: 140px;
-  border-left: 1px solid rgba(148, 163, 184, 0.1);
-  padding: 16px;
+  border-left: 1px solid rgba(148, 163, 184, 0.08);
+  padding: 20px 16px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
   justify-content: center;
 }
 
 .btn-action {
   width: 100%;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   padding: 8px;
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 700;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
+  transition: all 0.2s;
   
-  &.confirm { background: #10b981; color: #fff; &:hover { background: #059669; } }
-  &.reject { background: #ef4444; color: #fff; &:hover { background: #dc2626; } }
+  &.confirm { background: rgba(52, 211, 153, 0.15); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.3); &:hover { background: #10b981; color: #fff; } }
+  &.reject { background: rgba(248, 113, 113, 0.15); color: #f87171; border: 1px solid rgba(248, 113, 113, 0.3); &:hover { background: #ef4444; color: #fff; } }
 }
 
 .btn-action-outline {
   width: 100%;
   background: transparent;
-  border: 1px solid rgba(148, 163, 184, 0.2);
-  color: #cbd5e1;
-  border-radius: 6px;
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  color: #94a3b8;
+  border-radius: 8px;
   padding: 8px;
-  font-size: 13px;
+  font-size: 12px;
+  font-weight: 500;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  &:hover { background: rgba(148, 163, 184, 0.1); border-color: #38bdf8; color: #fff; }
+  transition: all 0.2s;
+  &:hover { background: rgba(56, 189, 248, 0.08); border-color: #38bdf8; color: #38bdf8; }
 }
 
 /* Pagination */
 .pagination-area {
-  margin-top: 32px;
+  margin-top: 24px;
+  padding: 16px 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 13px;
-  color: #94a3b8;
+  font-size: 12px;
+  color: #64748b;
+  border-top: 1px solid rgba(148, 163, 184, 0.08);
 }
 
 .pager-btns {
@@ -516,14 +550,16 @@ const activeTab = ref('All Status')
   gap: 8px;
 
   .btn-pager {
-    background: transparent;
-    border: 1px solid rgba(148, 163, 184, 0.2);
-    color: #fff;
+    background: rgba(30, 41, 59, 0.3);
+    border: 1px solid rgba(148, 163, 184, 0.15);
+    color: #94a3b8;
     padding: 6px 12px;
     border-radius: 6px;
+    font-size: 11px;
     cursor: pointer;
-    &.active { background: #3b82f6; border-color: #3b82f6; }
-    &:hover:not(.active) { background: rgba(148, 163, 184, 0.1); }
+    transition: all 0.2s;
+    &.active { background: #38bdf8; border-color: #38bdf8; color: #020617; font-weight: 700; }
+    &:hover:not(.active) { background: rgba(56, 189, 248, 0.1); color: #fff; border-color: #38bdf8; }
   }
 }
 </style>

@@ -54,6 +54,10 @@ const alarms = ref<FaceAlarm[]>([
     personName: 'Saleh Malik'
   }
 ])
+
+defineProps<{
+  hideTitle?: boolean
+}>()
 </script>
 
 <template>
@@ -120,7 +124,7 @@ const alarms = ref<FaceAlarm[]>([
     <!-- 右侧内容区域 -->
     <main class="main-content">
       <!-- 头部信息 -->
-      <header class="content-header">
+      <header class="content-header" v-if="!hideTitle">
         <div class="header-left">
           <h2 class="title">Face Alarm Center</h2>
           <p class="subtitle"><span class="highlight-num">6</span> active face alarms requiring attention</p>
