@@ -168,7 +168,7 @@ const getStatusColor = (status: string) => {
 
 <style scoped lang="scss">
 .task-list-layout {
-  padding: 32px 40px;
+  padding: 2px 4px;
   height: 100%;
   display: flex;
   flex-direction: column;

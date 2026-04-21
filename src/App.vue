@@ -578,8 +578,8 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 8px 12px 12px 12px;
-  gap: 8px;
+  padding: 2px 4px 4px 4px;
+  gap: 4px;
   overflow: hidden;
   min-width: 0;
 }
@@ -587,8 +587,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 4px 16px;
-  min-height: 48px;
+  padding: 0 16px;
+  min-height: 44px;
   background: rgba(15, 23, 42, 0.3);
   backdrop-filter: blur(8px);
   border-radius: 20px;
@@ -597,7 +597,7 @@ body {
 .tabs-bar {
   display: flex;
   gap: 6px;
-  margin-left: 16px;
+  margin-left: 0;
   overflow-x: auto;
   flex: 1;
 }
