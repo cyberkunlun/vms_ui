@@ -15,6 +15,7 @@
     "echarts": "^5.6.0",
     "echarts-gl": "^2.0.9",
     "element-plus": "^2.13.7",
+    "ol": "^10.9.0",
     "sass": "^1.99.0",
     "vue": "^3.5.31",
     "vue3-grid-layout": "^1.0.0",
