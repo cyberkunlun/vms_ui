@@ -9,9 +9,7 @@ import VideoPlayback from './views/VideoPlayback.vue'
 import VideoWall from './views/VideoWall.vue'
 import SystemManagement from './views/SystemManagement.vue'
 import FaceAlarmCenter from './views/surveillance/alarms/FaceAlarmCenter.vue'
-import SurveillanceTaskList from './views/surveillance/tasks/SurveillanceTaskList.vue'
-import VehicleTaskList from './views/surveillance/tasks/VehicleTaskList.vue'
-import VehicleAlarmCenter from './views/surveillance/alarms/VehicleAlarmCenter.vue'
+import UnifiedTaskList from './views/surveillance/tasks/UnifiedTaskList.vue'
 import UnifiedAlarmCenter from './views/surveillance/alarms/UnifiedAlarmCenter.vue'
 import CaptureRetrieval from './views/retrieval/CaptureRetrieval.vue'
 import VehicleCaptureRetrieval from './views/retrieval/VehicleCaptureRetrieval.vue'
@@ -76,12 +74,10 @@ const menuItems = [
     icon: View,
     label: 'Surveillance Center',
     children: [
-      { id: 'surveillance-task', label: 'Surveillance Task', icon: View, component: SurveillanceTaskList },
-      { id: 'vehicle-task', label: 'Vehicle Task', icon: Van, component: VehicleTaskList },
-      { id: 'face-alarm', label: 'Face Alarm', icon: Bell, component: UnifiedAlarmCenter },
-      { id: 'vehicle-alarm', label: 'Vehicle Alarm', icon: Van, component: UnifiedAlarmCenter },
+      { id: 'surveillance-task', label: 'Surveillance Tasks', icon: View, component: UnifiedTaskList },
+      { id: 'alarm-center', label: 'Alarm History', icon: Bell, component: UnifiedAlarmCenter },
       { id: 'realtime', label: 'Real-Time', icon: Bell, component: Realtime },
-      { id: 'approval-center', label: 'Approval Center', icon: Document, component: Approve },
+      { id: 'approval-center', label: 'Approve', icon: Document, component: Approve },
     ]
   },
   {
@@ -213,8 +209,8 @@ const currentViewTab = computed(() => {
     'role-mgmt': 'role',
     'dept-mgmt': 'dept',
     'log-audit': 'log',
-    'face-alarm': 'face-alarm',
-    'vehicle-alarm': 'vehicle-alarm'
+    'alarm-center': 'face-alarm',
+    'surveillance-task': 'face-task'
   }
   return tabMap[currentView.value] || 'user'
 })

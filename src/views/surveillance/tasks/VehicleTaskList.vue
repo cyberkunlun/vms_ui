@@ -14,9 +14,10 @@ import {
   Compass,
   Location,
   Monitor,
-  VideoCamera,
-  Van,
-  Calendar
+  Calendar,
+  Close,
+  Check,
+  ArrowDown
 } from '@element-plus/icons-vue'
 
 interface VehicleTask {
@@ -76,8 +77,14 @@ const form = reactive({
   type: 'Short-term',
   dateRange: [],
   remark: '',
-  selectedCameras: 0
+  selectedCameras: 0,
+  collaborators: [],
+  approvers: []
 })
+
+const activeStep = ref(0)
+const nextStep = () => { if (activeStep.value < 3) activeStep.value++ }
+const prevStep = () => { if (activeStep.value > 0) activeStep.value-- }
 
 const handleSelectionChange = (count: number) => {
   form.selectedCameras = count
@@ -85,6 +92,7 @@ const handleSelectionChange = (count: number) => {
 
 const handleAdd = () => {
   dialogTitle.value = 'Create New Vehicle Task'
+  activeStep.value = 0
   dialogVisible.value = true
 }
 
@@ -93,8 +101,13 @@ const handleEdit = (task: VehicleTask) => {
   form.name = task.name
   form.plates = task.plateNumber
   form.type = task.type
+  activeStep.value = 0
   dialogVisible.value = true
 }
+
+defineProps<{
+  hideTitle?: boolean
+}>()
 
 // Pagination state
 const currentPage = ref(1)
@@ -104,8 +117,8 @@ const totalTasks = ref(38)
 
 <template>
   <div class="task-list-layout">
-    <!-- Header Area -->
-    <header class="page-header">
+    <!-- Main Dashboard Header -->
+    <header class="page-header" v-if="!hideTitle">
       <div class="header-left">
         <h1 class="title">Vehicle Surveillance Task</h1>
         <p class="subtitle">License Plate Recognition · Traffic Anomaly Detection</p>
@@ -147,6 +160,10 @@ const totalTasks = ref(38)
         <option>Paused</option>
         <option>Expired</option>
       </select>
+
+      <button v-if="hideTitle" class="btn-create sm" @click="handleAdd">
+        <el-icon><Plus /></el-icon> Create
+      </button>
 
       <select class="cyber-select">
         <option>All Types</option>
@@ -218,84 +235,103 @@ const totalTasks = ref(38)
       />
     </div>
 
-    <!-- Unified Add/Edit Dialog -->
-    <el-dialog
+    <!-- Unified Add/Edit Dialog -->    <el-dialog
       v-model="dialogVisible"
-      :title="dialogTitle"
       width="1200px"
-      class="cyber-dialog-premium"
+      class="task-add-dialog-custom"
       destroy-on-close
+      :show-close="false"
+      align-center
     >
-      <div class="dialog-split-layout">
-        <!-- Left: Conditions Form -->
-        <div class="params-section">
-          <div class="section-title">
-            <el-icon><Monitor /></el-icon> Task Configuration
+      <div class="wizard-container">
+        <!-- Header -->
+        <header class="wizard-header">
+          <div class="header-main">
+            <div class="header-icon-box"><el-icon><Plus /></el-icon></div>
+            <div class="header-title">
+              <h3>Vehicle Task Wizard</h3>
+              <p>Configure plate recognition and monitoring task</p>
+            </div>
           </div>
-          
-          <el-form :model="form" label-position="top" class="premium-form">
-            <el-form-item label="Task Designation">
-              <el-input v-model="form.name" placeholder="E.g. VIP Vehicle Tracking" />
-            </el-form-item>
-            
-            <el-form-item label="Target Plate IDs">
-              <el-input 
-                v-model="form.plates" 
-                type="textarea" 
-                :rows="2"
-                placeholder="Separate multiple plates with commas..." 
-              />
-            </el-form-item>
+          <div class="header-ext">
+            <div class="step-count">STEP <span>{{ activeStep + 1 }}</span> OF 4</div>
+            <button class="close-wizard" @click="dialogVisible = false"><el-icon><Close /></el-icon></button>
+          </div>
+        </header>
 
-            <div class="form-row">
-              <el-form-item label="Duration Strategy" class="flex-1">
-                <el-radio-group v-model="form.type" class="glass-radio">
-                  <el-radio-button label="Short-term" />
-                  <el-radio-button label="Long-term" />
-                </el-radio-group>
-              </el-form-item>
+        <div class="wizard-content">
+          <!-- Sidebar: Timeline -->
+          <aside class="timeline-sidebar">
+            <div class="timeline-item" :class="{ active: activeStep === 0, done: activeStep > 0 }">
+              <div class="dot"><el-icon v-if="activeStep > 0"><Check /></el-icon><span v-else>1</span></div>
+              <div class="text"><h4>Basic Info</h4><p>Target plates</p></div>
+              <div class="line"></div>
+            </div>
+            <div class="timeline-item" :class="{ active: activeStep === 1, done: activeStep > 1 }">
+              <div class="dot"><el-icon v-if="activeStep > 1"><Check /></el-icon><span v-else>2</span></div>
+              <div class="text"><h4>AI Rules</h4><p>Vehicle attributes</p></div>
+              <div class="line"></div>
+            </div>
+            <div class="timeline-item" :class="{ active: activeStep === 2, done: activeStep > 2 }">
+              <div class="dot"><el-icon v-if="activeStep > 2"><Check /></el-icon><span v-else>3</span></div>
+              <div class="text"><h4>Deployment</h4><p>Camera selection</p></div>
+              <div class="line"></div>
+            </div>
+            <div class="timeline-item" :class="{ active: activeStep === 3, done: activeStep > 3 }">
+              <div class="dot"><span>4</span></div>
+              <div class="text"><h4>Workflow</h4><p>Approval & Review</p></div>
+            </div>
+          </aside>
+
+          <!-- Main Work Area -->
+          <main class="step-workarea">
+            <div class="form-scrollable">
+              <!-- Step 0: Basic -->
+              <el-form v-if="activeStep === 0" label-position="top">
+                <el-form-item label="Task Name">
+                   <el-input v-model="form.name" placeholder="Enter task name..." />
+                </el-form-item>
+                <el-form-item label="Plate Numbers (Comma separated)">
+                   <el-input v-model="form.plates" placeholder="E.g. OM-1234, OM-5678" />
+                </el-form-item>
+                <div class="grid-2">
+                  <el-form-item label="Strategy"><el-radio-group v-model="form.type"><el-radio-button label="Short-term"/><el-radio-button label="Long-term"/></el-radio-group></el-form-item>
+                </div>
+              </el-form>
+
+              <!-- Step 1: AI Rule -->
+              <el-form v-if="activeStep === 1" label-position="top">
+                <div class="grid-2">
+                  <el-form-item label="Vehicle Color"><el-select v-model="form.remark" style="width:100%"><el-option label="Any" value="Any"/></el-select></el-form-item>
+                  <el-form-item label="Vehicle Type"><el-select v-model="form.remark" style="width:100%"><el-option label="Any" value="Any"/></el-select></el-form-item>
+                </div>
+              </el-form>
+
+              <!-- Step 2: Map/Deployment -->
+              <div v-if="activeStep === 2" style="height: 400px;">
+                <CameraSelectionMap 
+                  :visible="activeStep === 2 && dialogVisible" 
+                  @selection-change="handleSelectionChange" 
+                />
+              </div>
+
+              <!-- Step 3: Collaboration -->
+              <el-form v-if="activeStep === 3" label-position="top">
+                <el-form-item label="Collaborators"><el-select v-model="form.collaborators" multiple style="width:100%"><el-option label="Traffic Admin" value="1"/></el-select></el-form-item>
+                <el-form-item label="Audit Workflow"><el-checkbox-group v-model="form.approvers"><el-checkbox label="Dept Head" border>Requires Department Head Approval</el-checkbox></el-checkbox-group></el-form-item>
+              </el-form>
             </div>
 
-            <el-form-item label="Operation Timeline">
-              <el-date-picker
-                v-model="form.dateRange"
-                type="datetimerange"
-                range-separator="-"
-                start-placeholder="Commence"
-                end-placeholder="Complete"
-                class="glass-date-picker"
-              />
-            </el-form-item>
-
-            <el-form-item label="Additional Directives">
-              <el-input v-model="form.remark" type="textarea" placeholder="Operational comments..." />
-            </el-form-item>
-          </el-form>
-        </div>
-
-        <!-- Right: Map Selection Area -->
-        <div class="map-selection-section">
-          <div class="section-title">
-            <el-icon><Location /></el-icon> Deployment Perimeter
-          </div>
-          
-          <div class="map-container">
-            <CameraSelectionMap 
-              :visible="dialogVisible" 
-              @selection-change="handleSelectionChange" 
-            />
-          </div>
+            <!-- Footer: Navigation -->
+            <footer class="wizard-footer">
+              <button class="btn-secondary" v-if="activeStep > 0" @click="prevStep">Back</button>
+              <div class="flex-spacer"></div>
+              <button class="btn-primary" v-if="activeStep < 3" @click="nextStep">Next Configuration</button>
+              <button class="btn-primary btn-submit" v-else @click="dialogVisible = false">Validate & Deploy</button>
+            </footer>
+          </main>
         </div>
       </div>
-
-      <template #footer>
-        <div class="premium-footer">
-          <button class="btn-cancel" @click="dialogVisible = false">Cancel</button>
-          <button class="btn-submit" @click="dialogVisible = false">
-            Validate & Deploy Task
-          </button>
-        </div>
-      </template>
     </el-dialog>
   </div>
 </template>
@@ -398,8 +434,8 @@ const totalTasks = ref(38)
 .task-card {
   background: rgba(30, 41, 59, 0.3);
   border: 1px solid rgba(148, 163, 184, 0.1);
-  border-radius: 20px;
-  padding: 24px 32px;
+  border-radius: 16px;
+  padding: 16px 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -418,11 +454,11 @@ const totalTasks = ref(38)
   width: 300px;
   .task-name-row {
     display: flex; align-items: center; gap: 12px; margin-bottom: 8px;
-    .status-indicator { width: 10px; height: 10px; border-radius: 50%; }
-    .task-name { margin: 0; font-size: 20px; font-weight: 700; color: #f8fafc; }
+    .status-indicator { width: 8px; height: 8px; border-radius: 50%; }
+    .task-name { margin: 0; font-size: 16px; font-weight: 600; color: #f8fafc; }
   }
   .task-meta {
-    display: flex; align-items: center; gap: 12px; font-size: 13px; color: #64748b;
+    display: flex; align-items: center; gap: 12px; font-size: 12px; color: #64748b;
     .id-text { font-family: monospace; font-weight: 600; color: #94a3b8; }
     .plate-info { color: #38bdf8; display: flex; align-items: center; gap: 6px; font-weight: 600; }
     .divider { color: rgba(148, 163, 184, 0.2); }
@@ -432,7 +468,7 @@ const totalTasks = ref(38)
 .task-stats {
   display: flex; gap: 40px;
   .stat-group {
-    display: flex; flex-direction: column; gap: 4px; color: #94a3b8; font-size: 13px;
+    display: flex; flex-direction: column; gap: 4px; color: #94a3b8; font-size: 12px;
     .el-icon { font-size: 18px; color: #38bdf8; margin-bottom: 4px; }
   }
 }
@@ -504,43 +540,56 @@ const totalTasks = ref(38)
   }
 }
 
-/* Dialog Styling */
-:deep(.el-dialog.cyber-dialog-premium) {
-  background: rgba(15, 23, 42, 0.95) !important;
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(56, 189, 248, 0.2);
-  border-radius: 24px;
-  .el-dialog__header { padding: 24px 32px; border-bottom: 1px solid rgba(148, 163, 184, 0.1); }
-  .el-dialog__title { color: #fff; font-weight: 700; font-size: 20px; }
-  .el-dialog__body { padding: 32px; }
+/* Wizard Styling - Essential Fixing without append-to-body */
+:deep(.task-add-dialog-custom) {
+  background: transparent !important; box-shadow: none !important; border: none !important; .el-dialog__header, .el-dialog__body { padding: 0 !important; }
 }
 
-.dialog-split-layout { display: flex; gap: 40px; height: 600px; }
-
-.params-section { flex: 1; display: flex; flex-direction: column; gap: 24px; }
-.section-title {
-  font-size: 15px; font-weight: 700; color: #38bdf8; display: flex; align-items: center; gap: 10px;
-  margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;
+.wizard-container {
+  width: 1000px; height: 600px; background: #0a0f1e; border: 1px solid #38bdf8; border-radius: 20px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
 }
 
-.premium-form {
-  :deep(.el-form-item__label) { color: #94a3b8; font-size: 12px; font-weight: 600; padding: 0 0 8px 0; }
-  :deep(.el-input__wrapper), :deep(.el-textarea__inner) {
-    background: rgba(10, 15, 30, 0.6) !important; border: 1px solid rgba(148, 163, 184, 0.15); box-shadow: none; border-radius: 12px; color: #fff;
-    &:hover, &.is-focus { border-color: #38bdf8; }
+.wizard-header {
+  padding: 16px 24px; background: #111827; border-bottom: 1px solid #1f2937; display: flex; justify-content: space-between; align-items: center;
+  .header-main { display: flex; gap: 16px; align-items: center; .header-icon-box { width: 44px; height: 44px; background: #38bdf8; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #000; font-size: 20px; } h3 { margin: 0; color: #fff; font-size: 18px; } p { margin: 4px 0 0; font-size: 12px; color: #64748b; } }
+  .header-ext { display: flex; align-items: center; gap: 20px; .step-count { font-size: 12px; color: #94a3b8; span { color: #38bdf8; font-weight: bold; font-size: 16px; } } .close-wizard { background: #1f2937; border: none; color: #64748b; padding: 6px; border-radius: 6px; cursor: pointer; &:hover { color: #fff; } } }
+}
+
+.wizard-content { flex: 1; display: flex; overflow: hidden; }
+
+.timeline-sidebar {
+  width: 280px; background: #070a14; border-right: 1px solid #1f2937; padding: 32px 0; display: flex; flex-direction: column;
+  .timeline-item {
+    padding: 0 24px; display: flex; gap: 16px; position: relative; margin-bottom: 40px;
+    .dot { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #1f2937; background: #070a14; color: #4b5563; font-weight: bold; display: flex; align-items: center; justify-content: center; font-size: 14px; position: relative; z-index: 2; transition: 0.3s; }
+    .text { h4 { margin: 0; color: #4b5563; font-size: 14px; } p { margin: 4px 0 0; font-size: 11px; color: #374151; } }
+    .line { position: absolute; left: 39px; top: 32px; width: 2px; height: 40px; background: #1f2937; z-index: 1; }
+    &:last-child .line { display: none; }
+    
+    &.active { .dot { border-color: #38bdf8; color: #38bdf8; box-shadow: 0 0 10px rgba(56, 189, 248, 0.4); } .text h4 { color: #fff; } .text p { color: #38bdf8; } }
+    &.done { .dot { border-color: #10b981; background: #10b981; color: #fff; } .line { background: #10b981; } .text h4 { color: #94a3b8; } }
   }
 }
 
-.map-selection-section { width: 650px; display: flex; flex-direction: column; gap: 24px; }
-.map-container { flex: 1; display: flex; flex-direction: column; gap: 16px; }
+.step-workarea { flex: 1; display: flex; flex-direction: column; padding: 32px; background: linear-gradient(135deg, #0a0f1e, #070a14); }
+.form-scrollable { flex: 1; overflow-y: auto; padding-right: 10px; }
 
+:deep(.el-form-item) {
+  .el-form-item__label { color: #94a3b8 !important; padding-bottom: 8px !important; font-weight: 500; font-size: 13px; }
+  .el-input__wrapper, .el-select .el-input__wrapper { background: #111827 !important; border: 1px solid #1f2937 !important; box-shadow: none !important; border-radius: 8px; color: #fff; &:hover { border-color: #38bdf8 !important; } }
+  .el-input__inner { color: #fff !important; }
+}
 
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
 
-/* Footer Actions */
-.premium-footer {
-  display: flex; justify-content: flex-end; gap: 16px;
-  button { padding: 12px 32px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.2s; }
-  .btn-cancel { background: transparent; border: 1px solid rgba(148, 163, 184, 0.2); color: #94a3b8; &:hover { color: #fff; border-color: #fff; } }
-  .btn-submit { background: linear-gradient(135deg, #0ea5e9, #38bdf8); border: none; color: #fff; box-shadow: 0 4px 15px rgba(14, 165, 233, 0.4); &:hover { transform: translateY(-1px); box-shadow: 0 8px 25px rgba(14, 165, 233, 0.6); } }
+:deep(.el-radio-button__inner) { background: #111827 !important; color: #64748b !important; border-color: #1f2937 !important; padding: 10px 24px; }
+:deep(.el-radio-button.is-active .el-radio-button__inner) { background: #38bdf8 !important; color: #000 !important; border-color: #38bdf8 !important; }
+
+.wizard-footer {
+  margin-top: 32px; padding-top: 24px; border-top: 1px solid #1f2937; display: flex; align-items: center;
+  .btn-secondary { background: transparent; border: 1px solid #1f2937; color: #94a3b8; padding: 10px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; &:hover { color: #fff; border-color: #fff; } }
+  .btn-primary { background: #38bdf8; color: #000; border: none; padding: 10px 24px; border-radius: 8px; cursor: pointer; font-weight: bold; box-shadow: 0 0 15px rgba(56, 189, 248, 0.3); &:hover { opacity: 0.8; } }
+  .btn-submit { background: #10b981; box-shadow: 0 0 15px rgba(16, 185, 129, 0.3); }
+  .flex-spacer { flex: 1; }
 }
 </style>

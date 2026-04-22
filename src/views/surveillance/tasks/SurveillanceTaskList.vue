@@ -81,12 +81,16 @@ const selectedCameraCount = ref(0)
 const handleSelectionChange = (count: number) => {
   selectedCameraCount.value = count
 }
+
+defineProps<{
+  hideTitle?: boolean
+}>()
 </script>
 
 <template>
   <div class="task-list-layout">
     <!-- Main Dashboard Header -->
-    <header class="page-header">
+    <header class="page-header" v-if="!hideTitle">
       <div class="header-left">
         <h1 class="title">Surveillance Task</h1>
         <p class="subtitle">Face Recognition Monitoring · Real-time AI Security</p>
@@ -111,8 +115,15 @@ const handleSelectionChange = (count: number) => {
         <el-icon class="search-icon"><Search /></el-icon>
         <input type="text" class="search-input" placeholder="Search by name or ID..." />
       </div>
-      <select class="cyber-select"><option>All Status</option><option>Active</option></select>
-      <select class="cyber-select"><option>All Types</option><option>Long-term</option></select>
+      <select class="cyber-select">
+        <option>All Status</option>
+        <option>Active</option>
+        <option>Disabled</option>
+        <option>Pending</option>
+      </select>
+      <button v-if="hideTitle" class="btn-create sm" @click="handleCreate">
+        <el-icon><Plus /></el-icon> Create
+      </button>
     </div>
 
     <!-- Task Cards list -->
@@ -346,7 +357,7 @@ const handleSelectionChange = (count: number) => {
   padding: 14px 20px;
   margin-bottom: 24px;
 
-  .filter-label { display: flex; align-items: center; gap: 8px; color: #38bdf8; font-weight: 600; font-size: 14px; }
+  .filter-label { display: flex; align-items: center; gap: 8px; color: #38bdf8; font-weight: 600; font-size: 13px; }
 }
 
 .search-input-wrap {
@@ -354,7 +365,7 @@ const handleSelectionChange = (count: number) => {
   .search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #64748b; }
   .search-input {
     width: 100%; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(148, 163, 184, 0.2);
-    border-radius: 10px; padding: 10px 16px 10px 45px; color: #fff; font-size: 14px; outline: none;
+    border-radius: 10px; padding: 10px 16px 10px 45px; color: #fff; font-size: 13px; outline: none;
     &:focus { border-color: #38bdf8; box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.1); }
   }
 }
@@ -370,9 +381,8 @@ const handleSelectionChange = (count: number) => {
 
 .task-card {
   background: rgba(30, 41, 59, 0.3);
-  border: 1px solid rgba(148, 163, 184, 0.1);
-  border-radius: 20px;
-  padding: 24px 32px;
+  border-radius: 16px;
+  padding: 16px 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -388,11 +398,11 @@ const handleSelectionChange = (count: number) => {
 .task-info {
   .task-name-row {
     display: flex; align-items: center; gap: 12px; margin-bottom: 8px;
-    .status-indicator { width: 10px; height: 10px; border-radius: 50%; }
-    .task-name { margin: 0; font-size: 20px; font-weight: 700; color: #f8fafc; }
+    .status-indicator { width: 8px; height: 8px; border-radius: 50%; }
+    .task-name { margin: 0; font-size: 16px; font-weight: 600; color: #f8fafc; }
   }
   .task-meta {
-    display: flex; align-items: center; gap: 12px; font-size: 13px; color: #64748b;
+    display: flex; align-items: center; gap: 12px; font-size: 12px; color: #64748b;
     .meta-item { font-family: monospace; font-weight: 600; color: #94a3b8; }
     .camera-info { color: #38bdf8; display: flex; align-items: center; gap: 6px; font-weight: 600; font-family: 'Inter', sans-serif; }
     .meta-divider { color: rgba(148, 163, 184, 0.2); }
