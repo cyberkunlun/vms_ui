@@ -12,6 +12,11 @@ import SurveillanceTaskList from './views/surveillance/tasks/SurveillanceTaskLis
 import VehicleTaskList from './views/surveillance/tasks/VehicleTaskList.vue'
 import VehicleAlarmCenter from './views/surveillance/alarms/VehicleAlarmCenter.vue'
 import UnifiedAlarmCenter from './views/surveillance/alarms/UnifiedAlarmCenter.vue'
+import CaptureRetrieval from './views/retrieval/CaptureRetrieval.vue'
+import VehicleCaptureRetrieval from './views/retrieval/VehicleCaptureRetrieval.vue'
+import FusionRetrieval from './views/retrieval/FusionRetrieval.vue'
+import FaceBodyArchivesRetrieval from './views/retrieval/FaceBodyArchivesRetrieval.vue'
+import VehicleArchivesRetrieval from './views/retrieval/VehicleArchivesRetrieval.vue'
 
 // Element Plus icon components
 import {
@@ -57,11 +62,11 @@ const menuItems = [
     icon: Search,
     label: 'retrieval center',
     children: [
-      { id: 'face-body-capture', label: 'Face/Body Capture Retrieval', icon: Search, component: CaseHandlingDashboard },
-      { id: 'vehicle-capture', label: 'Vehicle Capture Retrieval', icon: Search, component: CaseHandlingDashboard },
-      { id: 'fusion-retrieval', label: 'Fusion Retrieval', icon: Search, component: CaseHandlingDashboard },
-      { id: 'face-body-archives', label: 'Face/Body Archives Retrieval', icon: Search, component: CaseHandlingDashboard },
-      { id: 'vehicle-archives', label: 'Vehicle Archives Retrieval', icon: Search, component: CaseHandlingDashboard },
+      { id: 'face-body-capture', label: 'Capture Retrieval', icon: Search, component: CaptureRetrieval },
+      { id: 'vehicle-capture', label: 'Vehicle Capture Retrieval', icon: Search, component: VehicleCaptureRetrieval },
+      { id: 'fusion-retrieval', label: 'Fusion Retrieval', icon: Search, component: FusionRetrieval },
+      { id: 'face-body-archives', label: 'Face/Body Archives Retrieval', icon: Search, component: FaceBodyArchivesRetrieval },
+      { id: 'vehicle-archives', label: 'Vehicle Archives Retrieval', icon: Search, component: VehicleArchivesRetrieval },
     ]
   },
   {
