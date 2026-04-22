@@ -43,6 +43,7 @@ interface VehicleAlarm {
   speed?: string
   lane?: string
   direction?: string
+  vehicleBrand?: string
 }
 
 const alarms = ref<VehicleAlarm[]>([

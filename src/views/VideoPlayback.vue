@@ -43,7 +43,7 @@ const handleReset = () => {
           v-for="device in devices" 
           :key="device.id" 
           class="device-item"
-          :class="{ active: selectedDevice.id === device.id }"
+          :class="{ active: selectedDevice?.id === device.id }"
           @click="selectedDevice = device"
         >
           <div class="status-indicator" :class="device.status"></div>
@@ -83,7 +83,7 @@ const handleReset = () => {
       <div class="player-container">
         <div class="player-wrapper">
           <div class="player-header">
-            <span class="cam-name">{{ selectedDevice.name }} - Playback</span>
+            <span class="cam-name">{{ selectedDevice?.name }} - Playback</span>
             <div class="player-controls">
               <span>HD</span>
               <span>🔈</span>

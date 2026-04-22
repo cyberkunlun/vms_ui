@@ -23,10 +23,10 @@ const emit = defineEmits<{
 }>()
 
 const mapContainer = ref<HTMLElement | null>(null)
-const map = shallowRef<Map | null>(null)
-const vectorSource = shallowRef<VectorSource | null>(null)
-const drawSource = shallowRef<VectorSource | null>(null)
-const drawInteraction = shallowRef<Draw | null>(null)
+const map = shallowRef<Map>()
+const vectorSource = shallowRef<VectorSource>()
+const drawSource = shallowRef<VectorSource>()
+const drawInteraction = shallowRef<Draw>()
 
 const drawMode = ref<'None' | 'Rectangle' | 'Circle'>('None')
 const selectedCameraCount = ref(0)
@@ -124,7 +124,7 @@ const setDrawMode = (mode: 'None' | 'Rectangle' | 'Circle') => {
   drawMode.value = mode
   if (drawInteraction.value && map.value) {
     map.value.removeInteraction(drawInteraction.value)
-    drawInteraction.value = null
+    drawInteraction.value = undefined
   }
 
   if (mode === 'None') return
@@ -196,7 +196,7 @@ watch(() => props.visible, (newVal) => {
     }
     if (map.value) {
       map.value.setTarget(undefined)
-      map.value = null
+      map.value = undefined
     }
     clearSelection()
   }
@@ -215,7 +215,7 @@ onUnmounted(() => {
   }
   if (map.value) {
     map.value.setTarget(undefined)
-    map.value = null
+    map.value = undefined
   }
 })
 </script>

@@ -1,6 +1,17 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { Location, Clock, VideoCamera, ArrowRight, Warning } from '@element-plus/icons-vue'
+import { ref, computed, shallowRef, onMounted, onUnmounted } from 'vue'
+import 'ol/ol.css'
+import Map from 'ol/Map'
+import View from 'ol/View'
+import TileLayer from 'ol/layer/Tile'
+import OSM from 'ol/source/OSM'
+import { fromLonLat } from 'ol/proj'
+import { Location, Clock, VideoCamera, ArrowRight, Warning, Compass } from '@element-plus/icons-vue'
+import VectorLayer from 'ol/layer/Vector'
+import VectorSource from 'ol/source/Vector'
+import Feature from 'ol/Feature'
+import LineString from 'ol/geom/LineString'
+import { Style, Stroke, Fill, Circle } from 'ol/style'
 
 interface Alarm {
   id: string
@@ -16,8 +27,8 @@ interface Alarm {
   time: string
   status: string
   statusClass: 'high' | 'warning' | 'normal'
-  x: string
-  y: string
+  lon: number
+  lat: number
 }
 
 const activeTab = ref('face')
@@ -36,8 +47,8 @@ const mockAlarms = ref<Alarm[]>([
     time: '2026-04-21 16:55:02',
     status: '高级 (High)',
     statusClass: 'high',
-    x: '45%',
-    y: '30%'
+    lon: 58.4059,
+    lat: 23.5859
   },
   {
     id: 'ALM-002',
@@ -52,8 +63,8 @@ const mockAlarms = ref<Alarm[]>([
     time: '2026-04-21 16:50:15',
     status: '待确认 (Pending)',
     statusClass: 'warning',
-    x: '65%',
-    y: '50%'
+    lon: 58.4100,
+    lat: 23.5880
   },
   {
     id: 'ALM-003',
@@ -68,8 +79,8 @@ const mockAlarms = ref<Alarm[]>([
     time: '2026-04-21 16:45:33',
     status: '高级 (High)',
     statusClass: 'high',
-    x: '30%',
-    y: '70%'
+    lon: 58.3950,
+    lat: 23.5900
   },
   {
     id: 'ALM-004',
@@ -84,8 +95,8 @@ const mockAlarms = ref<Alarm[]>([
     time: '2026-04-21 16:30:10',
     status: '待确认 (Pending)',
     statusClass: 'warning',
-    x: '75%',
-    y: '20%'
+    lon: 58.4000,
+    lat: 23.5800
   }
 ])
 
@@ -100,8 +111,8 @@ const mockVehicleAlarms = ref<Alarm[]>([
     time: '2026-04-20 14:22:17',
     status: '中级',
     statusClass: 'warning',
-    x: '20%',
-    y: '40%'
+    lon: 58.4150,
+    lat: 23.5750
   },
   {
     id: 'V-002',
@@ -113,8 +124,8 @@ const mockVehicleAlarms = ref<Alarm[]>([
     time: '2026-04-20 14:25:33',
     status: '高级',
     statusClass: 'high',
-    x: '80%',
-    y: '60%'
+    lon: 58.3900,
+    lat: 23.5850
   }
 ])
 
@@ -126,10 +137,95 @@ const thumbnails = computed(() => {
   return currentAlarms.value.map(a => a.captureImg)
 })
 
-const selectedAlarm = ref<Alarm | null>(mockAlarms.value[0])
+const selectedAlarm = ref<Alarm | null>(null)
+
+const mapContainer = ref<HTMLElement | null>(null)
+const map = shallowRef<Map | null>(null)
+const vectorSource = new VectorSource()
+const renderTick = ref(0)
+let resizeObserver: ResizeObserver | null = null
+
+onMounted(() => {
+  map.value = new Map({
+    target: mapContainer.value!,
+    controls: [],
+    layers: [
+      new TileLayer({ 
+        source: new OSM(),
+        className: 'dark-map-layer'
+      }),
+      new VectorLayer({
+        source: vectorSource,
+        zIndex: 5
+      })
+    ],
+    view: new View({
+      center: fromLonLat([58.4059, 23.5859]),
+      zoom: 14
+    })
+  })
+
+  map.value.on('postrender', () => {
+    renderTick.value++
+  })
+
+  resizeObserver = new ResizeObserver(() => {
+    if (map.value) map.value.updateSize()
+  })
+  if (mapContainer.value) resizeObserver.observe(mapContainer.value)
+
+  // Select first alarm by default
+  setTimeout(() => {
+    if (mockAlarms.value[0]) selectAlarm(mockAlarms.value[0])
+  }, 500)
+})
+
+onUnmounted(() => {
+  if (resizeObserver) resizeObserver.disconnect()
+  if (map.value) {
+    map.value.setTarget(undefined)
+    map.value = null
+  }
+})
+
+const getPixelStyle = (lon: number, lat: number) => {
+  renderTick.value // reactive dependency
+  if (!map.value) return { display: 'none' }
+  const px = map.value.getPixelFromCoordinate(fromLonLat([lon, lat]))
+  if (!px) return { display: 'none' }
+  return { left: `${px[0]}px`, top: `${px[1]}px` }
+}
 
 const selectAlarm = (alarm: Alarm) => {
   selectedAlarm.value = alarm
+  
+  // Update Trajectory
+  vectorSource.clear()
+  const trajectoryPoints = [
+    [alarm.lon - 0.005, alarm.lat - 0.003],
+    [alarm.lon - 0.002, alarm.lat - 0.001],
+    [alarm.lon, alarm.lat]
+  ].map(coord => fromLonLat(coord))
+
+  const lineFeature = new Feature({
+    geometry: new LineString(trajectoryPoints)
+  })
+  lineFeature.setStyle(new Style({
+    stroke: new Stroke({
+      color: 'rgba(56, 189, 248, 0.8)',
+      width: 3,
+      lineDash: [8, 8]
+    })
+  }))
+  vectorSource.addFeature(lineFeature)
+
+  if (map.value) {
+    map.value.getView().animate({
+      center: fromLonLat([alarm.lon, alarm.lat]),
+      duration: 800,
+      zoom: 16
+    })
+  }
 }
 
 </script>
@@ -140,16 +236,16 @@ const selectAlarm = (alarm: Alarm) => {
     <!-- Left/Center: Map and Map overlays -->
     <div class="map-container">
       
-      <!-- Interactive Grid Background -->
-      <div class="grid-background"></div>
+      <!-- OpenLayers Map Background -->
+      <div class="ol-map" ref="mapContainer"></div>
 
       <!-- Map Markers (Ripples) -->
       <div 
-        v-for="alarm in mockAlarms" 
+        v-for="alarm in currentAlarms" 
         :key="'marker-'+alarm.id"
         class="map-marker"
         :class="{ active: selectedAlarm?.id === alarm.id, [alarm.statusClass]: true }"
-        :style="{ left: alarm.x, top: alarm.y }"
+        :style="getPixelStyle(alarm.lon, alarm.lat)"
         @click="selectAlarm(alarm)"
       >
         <div class="ripple r1"></div>
@@ -159,7 +255,7 @@ const selectAlarm = (alarm: Alarm) => {
 
       <!-- Floating Popup for Selected Alarm -->
       <transition name="popup">
-        <div class="alarm-popup" v-if="selectedAlarm" :style="{ left: `calc(${selectedAlarm.x} + 30px)`, top: `calc(${selectedAlarm.y} - 80px)` }">
+        <div class="alarm-popup" v-if="selectedAlarm" :style="{ left: `calc(${getPixelStyle(selectedAlarm.lon, selectedAlarm.lat).left} + 25px)`, top: `calc(${getPixelStyle(selectedAlarm.lon, selectedAlarm.lat).top} - 100px)` }">
           <button class="popup-close" @click="selectedAlarm = null">×</button>
           <div class="popup-image-wrapper">
             <img :src="selectedAlarm.captureImg" alt="Focused Target" />
@@ -319,27 +415,17 @@ const selectAlarm = (alarm: Alarm) => {
   display: flex;
   flex-direction: column;
 
-  /* Tactical Grid Background */
-  .grid-background {
+  /* OpenLayers Map styles */
+  .ol-map {
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
-    pointer-events: none;
-    background-color: #070a14;
-    background-image: 
-      linear-gradient(rgba(0, 180, 255, 0.05) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0, 180, 255, 0.05) 1px, transparent 1px);
-    background-size: 40px 40px;
     z-index: 1;
+    background: #0f172a;
+  }
 
-    /* Center glowing radar effect */
-    &::after {
-      content: '';
-      position: absolute;
-      top: 50%; left: 50%;
-      width: 600px; height: 600px;
-      transform: translate(-50%, -50%);
-      background: radial-gradient(circle, rgba(0, 180, 255, 0.08) 0%, transparent 70%);
-    }
+  /* Apply dark mode filter to OpenStreetMap tiles */
+  :deep(.dark-map-layer) {
+    filter: invert(100%) hue-rotate(180deg) brightness(85%) contrast(110%) sepia(20%) saturate(150%);
   }
 
   /* Map Markers */

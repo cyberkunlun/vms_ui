@@ -67,7 +67,7 @@ const layouts = {
 };
 
 // Default layout with all atomic widgets
-const layout = ref([...layouts[currentRole.value]]);
+const layout = ref([...(layouts[currentRole.value] || [])]);
 
 const availableWidgets = [
   { id: 'grid', title: 'Security Grid', component: SecurityGrid, w: 3, h: 4 },
@@ -91,7 +91,7 @@ const toggleEditMode = () => {
 
 const switchRole = (role: string) => {
   currentRole.value = role;
-  layout.value = [...layouts[role]];
+  layout.value = [...(layouts[role] || [])];
   showRoleMenu.value = false;
 };
 

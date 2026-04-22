@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import TrajectoryMap from '@/components/TrajectoryMap.vue'
 
 interface Snapshot {
   id: number;
@@ -35,6 +36,12 @@ const openProfile = (snap: Snapshot) => {
   selectedSnapshot.value = snap
   showProfile.value = true
 }
+
+const mockTrajectory = [
+  { lon: 58.4059, lat: 23.5859, time: '15:26:40', label: 'Main Entrance' },
+  { lon: 58.4080, lat: 23.5880, time: '15:28:15', label: 'Hallway A' },
+  { lon: 58.4100, lat: 23.5900, time: '15:30:05', label: 'Elevator B' }
+]
 
 const goToPlayback = () => {
   // Logic to navigate to playback page
@@ -162,21 +169,16 @@ const goToPlayback = () => {
               <button>👥 伴随分析</button>
             </div>
             <div class="tab-content">
-              <div class="trajectory-list">
-                <div class="traj-item">
-                  <div class="dot"></div>
-                  <div class="time">15:26:40</div>
-                  <div class="loc">主入口 - 进入</div>
+              <div class="trajectory-container">
+                <div class="map-view">
+                  <TrajectoryMap :points="mockTrajectory" />
                 </div>
-                <div class="traj-item">
-                  <div class="dot"></div>
-                  <div class="time">15:28:15</div>
-                  <div class="loc">A区走廊 - 通过</div>
-                </div>
-                <div class="traj-item">
-                  <div class="dot"></div>
-                  <div class="time">15:30:05</div>
-                  <div class="loc">B区电梯口 - 停留</div>
+                <div class="trajectory-list">
+                  <div v-for="item in mockTrajectory" :key="item.time" class="traj-item">
+                    <div class="dot"></div>
+                    <div class="time">{{ item.time }}</div>
+                    <div class="loc">{{ item.label }}</div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -432,13 +434,21 @@ const goToPlayback = () => {
           &.active { color: #00f7ff; border-bottom: 2px solid #00f7ff; }
         }
       }
-      .trajectory-list {
-        display: flex; flex-direction: column; gap: 12px;
-        .traj-item {
-          display: flex; align-items: center; gap: 15px; font-size: 13px;
-          .dot { width: 8px; height: 8px; background: #00f7ff; border-radius: 50%; box-shadow: 0 0 8px #00f7ff; }
-          .time { color: #94a3b8; width: 60px; }
-          .loc { color: #e2e8f0; }
+      .trajectory-container {
+        display: flex;
+        gap: 20px;
+        height: 300px;
+        .map-view { flex: 1; height: 100%; }
+        .trajectory-list {
+          width: 180px;
+          display: flex; flex-direction: column; gap: 12px;
+          overflow-y: auto;
+          .traj-item {
+            display: flex; align-items: center; gap: 12px; font-size: 12px;
+            .dot { width: 6px; height: 6px; background: #00f7ff; border-radius: 50%; flex-shrink: 0; }
+            .time { color: #94a3b8; white-space: nowrap; }
+            .loc { color: #e2e8f0; }
+          }
         }
       }
     }

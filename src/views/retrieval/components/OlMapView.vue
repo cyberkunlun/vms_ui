@@ -60,9 +60,9 @@ function initMap() {
   const vectorLayer = new VectorLayer({ source: vectorSource, zIndex: 10 })
   const darkBasemap = new TileLayer({
     source: new XYZ({
-      url: 'https://cartodb-basemaps-a.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png',
-      attributions: '© OpenStreetMap © CARTO'
-    })
+      url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    }),
+    className: 'dark-map-layer'
   })
   const center = fromLonLat(props.lonLat ?? MAP_CENTER_LON_LAT)
   map = new Map({
@@ -124,5 +124,9 @@ watch(
 :deep(.ol-control button) {
   background: rgba(30, 41, 59, 0.9);
   color: #94a3b8;
+}
+
+:deep(.dark-map-layer) {
+  filter: invert(100%) hue-rotate(180deg) brightness(85%) contrast(110%) sepia(20%) saturate(150%);
 }
 </style>
