@@ -425,7 +425,7 @@ const selectAlarm = (alarm: Alarm) => {
 
   /* Apply dark mode filter to OpenStreetMap tiles */
   :deep(.dark-map-layer) {
-    filter: invert(100%) hue-rotate(180deg) brightness(85%) contrast(110%) sepia(20%) saturate(150%);
+    filter: invert(100%) hue-rotate(180deg) brightness(90%) contrast(110%) saturate(120%) grayscale(10%);
   }
 
   /* Map Markers */
