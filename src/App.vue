@@ -3,6 +3,7 @@ import { ref, onMounted, onUnmounted, computed, watch, nextTick } from 'vue'
 import Dashboard from './views/Dashboard.vue'
 import CaseHandlingDashboard from './views/CaseHandlingDashboard.vue'
 import EventWarning from './views/EventWarning.vue'
+import Realtime from './views/Realtime.vue'
 import LiveMonitor from './views/LiveMonitor.vue'
 import VideoPlayback from './views/VideoPlayback.vue'
 import VideoWall from './views/VideoWall.vue'
@@ -73,7 +74,7 @@ const menuItems = [
       { id: 'vehicle-task', label: 'Vehicle Task', icon: Van, component: VehicleTaskList },
       { id: 'face-alarm', label: 'Face Alarm', icon: Bell, component: UnifiedAlarmCenter },
       { id: 'vehicle-alarm', label: 'Vehicle Alarm', icon: Van, component: UnifiedAlarmCenter },
-      { id: 'realtime', label: 'Real-Time', icon: Bell, component: EventWarning },
+      { id: 'realtime', label: 'Real-Time', icon: Bell, component: Realtime },
     ]
   },
   {
