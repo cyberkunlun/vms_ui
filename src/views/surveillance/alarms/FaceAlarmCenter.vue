@@ -22,10 +22,17 @@ interface FaceAlarm {
   library: string
   score: string
   capImg: string
+  capPanoramaImg: string
   libImg: string
   location: string
   device: string
   personName: string
+  idNumber: string
+  idType: string
+  nationality: string
+  gender: string
+  birthDate: string
+  remarks: string
 }
 
 const alarms = ref<FaceAlarm[]>([
@@ -36,10 +43,17 @@ const alarms = ref<FaceAlarm[]>([
     library: 'Criminal DB',
     score: '94%',
     capImg: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=300&h=300',
+    capPanoramaImg: 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=600&h=400',
     libImg: 'https://images.unsplash.com/photo-1519345182560-3f2917c472ef?auto=format&fit=crop&w=300&h=300',
     location: 'Muscat City Center',
     device: 'CAM-MCT-001',
-    personName: 'Ahmed Al-Rashid'
+    personName: 'Ahmed Al-Rashid',
+    idNumber: 'A123456789',
+    idType: 'National ID',
+    nationality: 'Omani',
+    gender: 'Male',
+    birthDate: '1985-06-15',
+    remarks: 'Wanted for questioning in related cases.'
   },
   {
     id: '2',
@@ -48,10 +62,17 @@ const alarms = ref<FaceAlarm[]>([
     library: 'Watchlist',
     score: '87%',
     capImg: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&h=300',
+    capPanoramaImg: 'https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&w=600&h=400',
     libImg: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&h=300',
     location: 'North Gate Entrance',
     device: 'CAM-NGE-004',
-    personName: 'Saleh Malik'
+    personName: 'Saleh Malik',
+    idNumber: 'B987654321',
+    idType: 'Passport',
+    nationality: 'UAE',
+    gender: 'Male',
+    birthDate: '1990-11-22',
+    remarks: 'Frequent suspicious border crossings.'
   }
 ])
 
@@ -63,6 +84,17 @@ defineProps<{
 const currentPage = ref(1)
 const pageSize = ref(10)
 const totalTasks = ref(6)
+
+// Dialog State
+const detailDialogVisible = ref(false)
+const selectedAlarm = ref<FaceAlarm | null>(null)
+const activeTab = ref('detail')
+
+const openDetail = (alarm: FaceAlarm) => {
+  selectedAlarm.value = alarm
+  activeTab.value = 'detail'
+  detailDialogVisible.value = true
+}
 </script>
 
 <template>
@@ -202,7 +234,7 @@ const totalTasks = ref(6)
           <div class="card-actions-rail">
             <button class="btn-action confirm"><el-icon><Check /></el-icon> Confirm</button>
             <button class="btn-action reject"><el-icon><Close /></el-icon> Reject</button>
-            <button class="btn-action-outline"><el-icon><View /></el-icon> Detail</button>
+            <button class="btn-action-outline" @click="openDetail(alarm)"><el-icon><View /></el-icon> Detail</button>
             <button class="btn-action-outline"><el-icon><UserFilled /></el-icon> Assign</button>
           </div>
         </article>
@@ -220,6 +252,103 @@ const totalTasks = ref(6)
         />
       </div>
     </main>
+
+    <!-- Detail Dialog -->
+    <el-dialog
+      v-model="detailDialogVisible"
+      title="Face Alarm Detail"
+      width="1100px"
+      top="4vh"
+      class="cyber-dialog-premium"
+      destroy-on-close
+    >
+      <el-tabs v-model="activeTab" class="cyber-tabs">
+        <el-tab-pane label="Detail" name="detail">
+          <div class="detail-tab-content" v-if="selectedAlarm">
+            <!-- 3 Images Section -->
+            <div class="images-grid">
+              <!-- Panorama -->
+              <div class="img-card panorama">
+                <div class="img-header">Capture Panorama</div>
+                <div class="img-wrapper">
+                  <img :src="selectedAlarm.capPanoramaImg" alt="Panorama" />
+                </div>
+                <div class="img-info">
+                  <p><el-icon><Location /></el-icon> {{ selectedAlarm.location }}</p>
+                  <p><el-icon><VideoCamera /></el-icon> {{ selectedAlarm.device }}</p>
+                  <p><el-icon><Calendar /></el-icon> {{ selectedAlarm.time }}</p>
+                </div>
+              </div>
+
+              <!-- Face Capture -->
+              <div class="img-card capture">
+                <div class="img-header">Face Capture</div>
+                <div class="img-wrapper">
+                  <img :src="selectedAlarm.capImg" alt="Capture" />
+                  <div class="score-overlay">Score: {{ selectedAlarm.score }}</div>
+                </div>
+                <div class="img-info">
+                  <p>Quality: High</p>
+                  <p>Yaw: 5° | Pitch: -2°</p>
+                  <p>Mask: No | Glasses: Yes</p>
+                </div>
+              </div>
+
+              <!-- Database Face -->
+              <div class="img-card library">
+                <div class="img-header">Database Face</div>
+                <div class="img-wrapper">
+                  <img :src="selectedAlarm.libImg" alt="Library" />
+                </div>
+                <div class="img-info">
+                  <p>Library: {{ selectedAlarm.library }}</p>
+                  <p>Registered: 2025-01-10</p>
+                  <p>Status: Active</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Database Info Bottom Section -->
+            <div class="db-info-section">
+              <h3 class="section-title">Database Person Information</h3>
+              <div class="info-grid">
+                <div class="info-item">
+                  <label>Name</label>
+                  <span>{{ selectedAlarm.personName }}</span>
+                </div>
+                <div class="info-item">
+                  <label>ID Number</label>
+                  <span class="highlight">{{ selectedAlarm.idNumber }}</span>
+                </div>
+                <div class="info-item">
+                  <label>ID Type</label>
+                  <span>{{ selectedAlarm.idType }}</span>
+                </div>
+                <div class="info-item">
+                  <label>Nationality</label>
+                  <span>{{ selectedAlarm.nationality }}</span>
+                </div>
+                <div class="info-item">
+                  <label>Gender</label>
+                  <span>{{ selectedAlarm.gender }}</span>
+                </div>
+                <div class="info-item">
+                  <label>Birth Date</label>
+                  <span>{{ selectedAlarm.birthDate }}</span>
+                </div>
+                <div class="info-item full-width">
+                  <label>Remarks</label>
+                  <span>{{ selectedAlarm.remarks }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </el-tab-pane>
+        <!-- Future tabs placeholders -->
+        <el-tab-pane label="Video Playback" name="video" disabled></el-tab-pane>
+        <el-tab-pane label="Trajectory" name="trajectory" disabled></el-tab-pane>
+      </el-tabs>
+    </el-dialog>
   </div>
 </template>
 
@@ -554,6 +683,163 @@ const totalTasks = ref(6)
       margin: 0 4px;
       &:hover { color: #38bdf8; }
       &:disabled { background: rgba(15, 23, 42, 0.4); color: #475569; border-color: transparent; }
+    }
+  }
+}
+
+/* ================= Dialog Styling ================= */
+:deep(.el-dialog.cyber-dialog-premium) {
+  background: rgba(15, 23, 42, 0.95) !important;
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  border-radius: 20px;
+  .el-dialog__header { padding: 16px 24px 0; border-bottom: none; margin-right: 0;}
+  .el-dialog__title { color: #fff; font-weight: 700; font-size: 18px; }
+  .el-dialog__body { padding: 0 24px 24px; }
+}
+
+/* Tabs Styling */
+:deep(.cyber-tabs) {
+  .el-tabs__nav-wrap::after { background-color: rgba(148, 163, 184, 0.1); }
+  .el-tabs__item { color: #94a3b8; font-weight: 600; font-size: 14px; padding: 0 16px; height: 36px; line-height: 36px; }
+  .el-tabs__item.is-active { color: #38bdf8; }
+  .el-tabs__active-bar { background-color: #38bdf8; }
+  .el-tabs__header { margin-bottom: 12px; }
+}
+
+/* Detail Content */
+.detail-tab-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.images-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 16px;
+}
+
+.img-card {
+  background: rgba(10, 15, 30, 0.5);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  .img-header {
+    background: rgba(30, 41, 59, 0.5);
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #cbd5e1;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+    text-align: center;
+  }
+
+  .img-wrapper {
+    flex: 1;
+    position: relative;
+    background: #000;
+    height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .score-overlay {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      background: rgba(220, 38, 38, 0.9);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 6px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    }
+  }
+
+  .img-info {
+    padding: 8px 12px;
+    background: rgba(15, 23, 42, 0.8);
+    p {
+      margin: 0 0 4px 0;
+      font-size: 11px;
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      &:last-child { margin-bottom: 0; }
+    }
+  }
+}
+
+.db-info-section {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  border-radius: 12px;
+  padding: 12px 20px;
+
+  .section-title {
+    margin: 0 0 10px 0;
+    font-size: 13px;
+    color: #38bdf8;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    &::before {
+      content: '';
+      width: 4px;
+      height: 14px;
+      background: #38bdf8;
+      border-radius: 2px;
+    }
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+
+    .info-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+
+      &.full-width {
+        grid-column: 1 / -1;
+      }
+
+      label {
+        font-size: 11px;
+        color: #64748b;
+        text-transform: uppercase;
+      }
+
+      span {
+        font-size: 13px;
+        color: #e2e8f0;
+        font-weight: 500;
+        
+        &.highlight {
+          color: #f8fafc;
+          font-family: monospace;
+          background: rgba(255, 255, 255, 0.1);
+          padding: 2px 6px;
+          border-radius: 4px;
+          width: fit-content;
+        }
+      }
     }
   }
 }
