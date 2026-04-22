@@ -58,6 +58,11 @@ const alarms = ref<FaceAlarm[]>([
 defineProps<{
   hideTitle?: boolean
 }>()
+
+// Pagination state
+const currentPage = ref(1)
+const pageSize = ref(10)
+const totalTasks = ref(6)
 </script>
 
 <template>
@@ -110,11 +115,11 @@ defineProps<{
           </select>
         </div>
 
-        <div class="filter-actions">
-          <button class="btn-primary search-btn">
+        <div class="sidebar-actions">
+          <button class="btn-search">
             <el-icon><Search /></el-icon> Search
           </button>
-          <button class="btn-ghost reset-btn">
+          <button class="btn-reset">
             <el-icon><Refresh /></el-icon>
           </button>
         </div>
@@ -194,24 +199,26 @@ defineProps<{
           </div>
 
           <!-- 操作按钮列 -->
-          <div class="col-actions">
-            <button class="action-btn confirm">Confirm</button>
-            <button class="action-btn detail">Detail</button>
-            <button class="action-btn reject">Reject</button>
-            <button class="btn-icon-ghost"><el-icon><UserFilled /></el-icon></button>
+          <div class="card-actions-rail">
+            <button class="btn-action confirm"><el-icon><Check /></el-icon> Confirm</button>
+            <button class="btn-action reject"><el-icon><Close /></el-icon> Reject</button>
+            <button class="btn-action-outline"><el-icon><View /></el-icon> Detail</button>
+            <button class="btn-action-outline"><el-icon><UserFilled /></el-icon> Assign</button>
           </div>
         </article>
       </div>
 
       <!-- 分页底栏 -->
-      <footer class="pagination-footer">
-        <span class="page-info">Showing 1 to 6 of 6 alarms</span>
-        <div class="pagination">
-          <button class="page-btn">Previous</button>
-          <button class="page-btn active">1</button>
-          <button class="page-btn">Next</button>
-        </div>
-      </footer>
+      <div class="cyber-pagination">
+        <el-pagination
+          v-model:current-page="currentPage"
+          v-model:page-size="pageSize"
+          :page-sizes="[10, 20, 50]"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="totalTasks"
+          background
+        />
+      </div>
     </main>
   </div>
 </template>
@@ -286,10 +293,43 @@ defineProps<{
 }
 .mt-2 { margin-top: 8px; }
 
-.filter-actions {
+.mt-2 { margin-top: 8px; }
+
+.sidebar-actions {
   display: flex;
-  gap: 12px;
-  margin-top: auto;
+  gap: 8px;
+  margin-top: 20px;
+
+  .btn-search {
+    flex: 1;
+    background: linear-gradient(135deg, #0ea5e9, #38bdf8);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+    &:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(14, 165, 233, 0.4); }
+  }
+
+  .btn-reset {
+    width: 42px;
+    background: rgba(148, 163, 184, 0.05);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    color: #cbd5e1;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    &:hover { background: rgba(148, 163, 184, 0.1); border-color: #38bdf8; color: #38bdf8; }
+  }
 }
 
 /* =========== 右侧主内容区 =========== */
@@ -408,30 +448,50 @@ defineProps<{
   h4 { margin: 0; font-size: 14px; font-weight: 600; color: #f1f5f9; }
 }
 
-.col-actions {
-  width: 120px;
+.card-actions-rail {
+  width: 140px;
+  border-left: 1px solid rgba(148, 163, 184, 0.08);
+  padding: 20px 16px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
   justify-content: center;
 }
 
-/* 按钮样式 */
-.btn-primary {
-  background: linear-gradient(135deg, #22d3ee, #0ea5e9);
-  color: #0a0f1a;
+.btn-action {
+  width: 100%;
   border: none;
-  padding: 8px 16px;
-  border-radius: 40px;
-  font-size: 13px;
-  font-weight: 600;
+  border-radius: 8px;
+  padding: 8px;
+  font-size: 12px;
+  font-weight: 700;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 6px;
-  flex: 1;
+  justify-content: center;
+  gap: 8px;
   transition: all 0.2s;
-  &:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(34, 211, 238, 0.3); }
+  
+  &.confirm { background: rgba(52, 211, 153, 0.15); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.3); &:hover { background: #10b981; color: #fff; } }
+  &.reject { background: rgba(248, 113, 113, 0.15); color: #f87171; border: 1px solid rgba(248, 113, 113, 0.3); &:hover { background: #ef4444; color: #fff; } }
+}
+
+.btn-action-outline {
+  width: 100%;
+  background: transparent;
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  color: #94a3b8;
+  border-radius: 8px;
+  padding: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
+  &:hover { background: rgba(56, 189, 248, 0.08); border-color: #38bdf8; color: #38bdf8; }
 }
 
 .btn-ghost {
@@ -449,55 +509,52 @@ defineProps<{
   &:hover { background: #334155; color: white; }
 }
 
-.action-btn {
-  width: 100%;
-  padding: 6px 0;
-  border-radius: 8px;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  border: none;
-  &.confirm { background: #10b981; color: white; }
-  &.detail { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.2); }
-  &.reject { background: transparent; color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.2); }
-}
-
-.btn-icon-ghost {
-  background: transparent;
-  border: 1px solid rgba(148, 163, 184, 0.2);
-  color: #94a3b8;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  margin: 0 auto;
-}
-
-.pagination-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+/* Custom Pagination Styling */
+.cyber-pagination {
   margin-top: 24px;
-  padding: 16px 8px;
-  border-top: 1px solid rgba(148, 163, 184, 0.1);
-  .page-info { font-size: 12px; color: #64748b; }
-}
-
-.pagination {
   display: flex;
-  gap: 8px;
-  .page-btn {
-    background: transparent;
-    border: 1px solid rgba(148, 163, 184, 0.1);
-    color: #94a3b8;
-    padding: 4px 10px;
-    border-radius: 6px;
-    font-size: 12px;
-    cursor: pointer;
-    &.active { background: #38bdf8; border-color: #38bdf8; color: #0f172a; font-weight: 600; }
+  justify-content: flex-end;
+  padding-bottom: 20px;
+
+  :deep(.el-pagination) {
+    --el-pagination-bg-color: rgba(30, 41, 59, 0.4);
+    --el-pagination-text-color: #94a3b8;
+    --el-pagination-button-color: #94a3b8;
+    --el-pagination-hover-color: #38bdf8;
+    
+    .el-pagination__total, .el-pagination__jump {
+      color: #64748b;
+    }
+    
+    .el-input__wrapper {
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      box-shadow: none;
+      .el-input__inner { color: #cbd5e1; }
+    }
+
+    .el-pager li {
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid rgba(148, 163, 184, 0.1);
+      border-radius: 6px;
+      margin: 0 4px;
+      font-weight: 600;
+      &.is-active {
+        background: rgba(14, 165, 233, 0.2);
+        border-color: #38bdf8;
+        color: #38bdf8;
+      }
+      &:hover { color: #38bdf8; }
+    }
+    
+    .btn-prev, .btn-next {
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid rgba(148, 163, 184, 0.1);
+      border-radius: 6px;
+      margin: 0 4px;
+      &:hover { color: #38bdf8; }
+      &:disabled { background: rgba(15, 23, 42, 0.4); color: #475569; border-color: transparent; }
+    }
   }
 }
 </style>

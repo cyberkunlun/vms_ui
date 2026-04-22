@@ -18,6 +18,7 @@ import VehicleCaptureRetrieval from './views/retrieval/VehicleCaptureRetrieval.v
 import FusionRetrieval from './views/retrieval/FusionRetrieval.vue'
 import FaceBodyArchivesRetrieval from './views/retrieval/FaceBodyArchivesRetrieval.vue'
 import VehicleArchivesRetrieval from './views/retrieval/VehicleArchivesRetrieval.vue'
+import Approve from './views/surveillance/approve/approve.vue'
 
 // Element Plus icon components
 import {
@@ -80,6 +81,7 @@ const menuItems = [
       { id: 'face-alarm', label: 'Face Alarm', icon: Bell, component: UnifiedAlarmCenter },
       { id: 'vehicle-alarm', label: 'Vehicle Alarm', icon: Van, component: UnifiedAlarmCenter },
       { id: 'realtime', label: 'Real-Time', icon: Bell, component: Realtime },
+      { id: 'approval-center', label: 'Approval Center', icon: Document, component: Approve },
     ]
   },
   {
@@ -114,9 +116,15 @@ const menuItems = [
   }
 ]
 
-const openedViews = ref<string[]>(['dashboard']) // 默认打开
-const currentView = ref('dashboard')
+const openedViews = ref<string[]>(['home']) // 默认打开
+const currentView = ref('home')
 const sidebarCollapsed = ref(true)
+
+// Context Menu and Scroll State
+const contextMenuVisible = ref(false)
+const contextMenuPosition = ref({ left: '0px', top: '0px' })
+const contextMenuTarget = ref<string>('')
+const tabsBarRef = ref<HTMLElement | null>(null)
 
 // 子菜单浮层相关状态
 const activeSubMenuId = ref<string | null>(null)      // 当前显示子菜单的父菜单ID
@@ -126,13 +134,59 @@ const subMenuItems = ref<Array<{ id: string; label: string; icon: any; component
 // 获取菜单项的DOM元素引用（用于定位浮层）
 const menuItemRefs = ref<Map<string, HTMLElement>>(new Map())
 
+const openContextMenu = (e: MouseEvent, tabId: string) => {
+  e.preventDefault()
+  contextMenuVisible.value = true
+  contextMenuPosition.value = { left: `${e.clientX}px`, top: `${e.clientY}px` }
+  contextMenuTarget.value = tabId
+}
+
+const closeContextMenu = () => {
+  contextMenuVisible.value = false
+}
+
+const handleTabsScroll = (e: WheelEvent) => {
+  if (tabsBarRef.value) {
+    tabsBarRef.value.scrollLeft += e.deltaY
+  }
+}
+
+const handleContextMenuAction = (action: string) => {
+  const targetIndex = openedViews.value.indexOf(contextMenuTarget.value)
+  if (targetIndex === -1 && action !== 'close-all') return
+  
+  switch (action) {
+    case 'close-current':
+      closeTab(contextMenuTarget.value)
+      break
+    case 'close-left':
+      const leftTabs = openedViews.value.slice(0, targetIndex)
+      leftTabs.forEach(tab => closeTab(tab))
+      break
+    case 'close-right':
+      const rightTabs = openedViews.value.slice(targetIndex + 1)
+      rightTabs.forEach(tab => closeTab(tab))
+      break
+    case 'close-all':
+      openedViews.value = ['home']
+      currentView.value = 'home'
+      break
+  }
+  closeContextMenu()
+}
+
 const closeTab = (tab: string) => {
   const index = openedViews.value.indexOf(tab)
   if (index !== -1) openedViews.value.splice(index, 1)
 
   if (currentView.value === tab) {
-    const next = openedViews.value[index - 1] || openedViews.value[0]
-    if (next) currentView.value = next
+    const next = openedViews.value[index - 1] || openedViews.value[0] || 'home'
+    currentView.value = next
+  }
+
+  if (openedViews.value.length === 0) {
+    openedViews.value = ['home']
+    currentView.value = 'home'
   }
 }
 
@@ -275,12 +329,14 @@ const handleResizeOrScroll = () => {
 
 onMounted(() => {
   document.addEventListener('click', handleClickOutside)
+  document.addEventListener('click', closeContextMenu)
   window.addEventListener('resize', handleResizeOrScroll)
   window.addEventListener('scroll', handleResizeOrScroll, true)
 })
 
 onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside)
+  document.removeEventListener('click', closeContextMenu)
   window.removeEventListener('resize', handleResizeOrScroll)
   window.removeEventListener('scroll', handleResizeOrScroll, true)
 })
@@ -365,16 +421,19 @@ const showAlertPanel = () => {
 
     <main class="main">
       <header class="topbar">
-        <div class="tabs-bar">
-          <div
-            v-for="tab in openedViews"
-            :key="tab"
-            class="tab-item"
-            :class="{ active: tab === currentView }"
-            @click="switchView(tab)"
-          >
-            {{ menuItems.flatMap(m => [m, ...(m.children || [])]).find(v => v.id === tab)?.label || tab }}
-            <span class="close-btn" @click.stop="closeTab(tab)">×</span>
+        <div class="tabs-wrapper" @wheel.prevent="handleTabsScroll">
+          <div class="tabs-bar" ref="tabsBarRef">
+            <div
+              v-for="tab in openedViews"
+              :key="tab"
+              class="tab-item"
+              :class="{ active: tab === currentView }"
+              @click="switchView(tab)"
+              @contextmenu.prevent="openContextMenu($event, tab)"
+            >
+              {{ menuItems.flatMap(m => [m, ...(m.children || [])]).find(v => v.id === tab)?.label || tab }}
+              <span class="close-btn" @click.stop="closeTab(tab)">×</span>
+            </div>
           </div>
         </div>
         <div class="topbar-right">
@@ -429,6 +488,16 @@ const showAlertPanel = () => {
           </div>
         </div>
       </transition>
+    </Teleport>
+
+    <!-- Context Menu for Tabs -->
+    <Teleport to="body">
+      <ul v-show="contextMenuVisible" class="tab-context-menu" :style="contextMenuPosition">
+        <li @click="handleContextMenuAction('close-current')">Close Current</li>
+        <li @click="handleContextMenuAction('close-left')">Close Left</li>
+        <li @click="handleContextMenuAction('close-right')">Close Right</li>
+        <li @click="handleContextMenuAction('close-all')">Close All</li>
+      </ul>
     </Teleport>
   </div>
 </template>
@@ -608,12 +677,22 @@ body {
   border-radius: 20px;
   border: 1px solid rgba(148, 163, 184, 0.1);
 }
+.tabs-wrapper {
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
 .tabs-bar {
   display: flex;
   gap: 6px;
   margin-left: 0;
   overflow-x: auto;
   flex: 1;
+  scrollbar-width: none; /* Firefox */
+}
+.tabs-bar::-webkit-scrollbar {
+  display: none; /* Chrome */
 }
 .tab-item {
   display: flex;
@@ -879,5 +958,31 @@ body {
   color: #e5e7eb !important;
   backdrop-filter: blur(12px) !important;
   margin-left: 8px !important;
+}
+
+/* Context Menu CSS */
+.tab-context-menu {
+  position: fixed;
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  border-radius: 8px;
+  padding: 6px 0;
+  min-width: 150px;
+  z-index: 9999;
+  list-style: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  margin: 0;
+}
+.tab-context-menu li {
+  padding: 8px 16px;
+  color: #cbd5e1;
+  font-size: 13px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.tab-context-menu li:hover {
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
 }
 </style>

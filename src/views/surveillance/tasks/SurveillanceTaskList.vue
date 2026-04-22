@@ -69,6 +69,11 @@ const nextStep = () => {
 const prevStep = () => {
   if (activeStep.value > 0) activeStep.value--
 }
+
+// Pagination state
+const currentPage = ref(1)
+const pageSize = ref(10)
+const totalTasks = ref(45)
 </script>
 
 <template>
@@ -119,13 +124,25 @@ const prevStep = () => {
         </div>
         <div class="task-actions">
           <div class="status-badge" :class="task.status.toLowerCase().replace(' ', '-')">{{ task.status }}</div>
-          <div class="btn-row">
-            <button class="action-btn"><el-icon><View /></el-icon></button>
-            <button class="action-btn"><el-icon><Edit /></el-icon></button>
+          <div class="btn-group">
+            <button class="action-btn btn-detail"><el-icon><View /></el-icon> Detail</button>
+            <button class="action-btn btn-edit"><el-icon><Edit /></el-icon> Edit</button>
             <button class="action-btn btn-delete"><el-icon><Delete /></el-icon></button>
           </div>
         </div>
       </article>
+    </div>
+
+    <!-- Pagination -->
+    <div class="cyber-pagination">
+      <el-pagination
+        v-model:current-page="currentPage"
+        v-model:page-size="pageSize"
+        :page-sizes="[10, 20, 50]"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="totalTasks"
+        background
+      />
     </div>
 
     <!-- The Wizard Dialog -->
@@ -250,25 +267,200 @@ const prevStep = () => {
 </template>
 
 <style scoped lang="scss">
-.task-list-layout { padding: 20px 24px; height: 100%; display: flex; flex-direction: column; background: #070a14; overflow-y: auto; }
-
-/* Dashboard Styling */
-.page-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;
-  .title { font-size: 26px; color: #fff; margin: 0; }
-  .subtitle { font-size: 13px; color: #64748b; margin-top: 4px; }
-  .header-right { display: flex; align-items: center; gap: 16px; }
+.task-list-layout {
+  padding: 12px 20px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+  color: #e2e8f0;
+  overflow-y: auto;
 }
-.stats-pill { display: flex; align-items: center; gap: 16px; background: #111827; border: 1px solid #1f2937; padding: 10px 20px; border-radius: 12px; .stats-icon { color: #38bdf8; } .stat-item { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #94a3b8; .dot { width: 6px; height: 6px; border-radius: 50%; &.active-dot { background: #10b981; } &.disabled-dot { background: #ef4444; } &.pending-dot { background: #eab308; } } } }
-.btn-create { background: #38bdf8; color: #000; border: none; border-radius: 8px; padding: 10px 20px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 0 15px rgba(56, 189, 248, 0.3); &:hover { opacity: 0.9; } }
 
-.filter-bar { display: flex; align-items: center; gap: 16px; background: #111827; padding: 16px; border-radius: 12px; margin-bottom: 24px; .filter-label { display: flex; align-items: center; gap: 8px; color: #38bdf8; font-weight: bold; font-size: 13px; } }
-.search-input-wrap { flex: 1; position: relative; .search-icon { position: absolute; left: 12px; top: 12px; color: #4b5563; } .search-input { width: 100%; background: #070a14; border: 1px solid #1f2937; padding: 10px 10px 10px 36px; border-radius: 8px; color: #fff; outline: none; &:focus { border-color: #38bdf8; } } }
-.cyber-select { background: #070a14; border: 1px solid #1f2937; color: #fff; padding: 8px 16px; border-radius: 8px; }
+/* Page Header */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
 
-.task-list { display: flex; flex-direction: column; gap: 12px; }
-.task-card { background: #111827; border: 1px solid #1f2937; border-radius: 16px; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; &:hover { border-color: #38bdf8; background: #141d2e; } }
-.task-info { .task-name-row { display: flex; align-items: center; gap: 12px; .status-indicator { width: 8px; height: 8px; border-radius: 50%; } .task-name { margin: 0; color: #fff; font-size: 18px; } } .task-meta { display: flex; align-items: center; gap: 12px; color: #64748b; font-size: 13px; margin-top: 6px; .camera-info { color: #38bdf8; } } }
-.task-actions { display: flex; align-items: center; gap: 20px; .status-badge { padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; &.active { color: #10b981; border: 1px solid #10b981; } &.pending-approval { color: #eab308; border: 1px solid #eab308; } } .btn-row { display: flex; gap: 8px; } .action-btn { background: #1f2937; border: none; color: #94a3b8; padding: 8px; border-radius: 6px; cursor: pointer; &:hover { background: #374151; color: #fff; } &.btn-delete { color: #ef4444; &:hover { background: #ef4444; color: #fff; } } } }
+  .title { font-size: 26px; font-weight: 700; color: #fff; margin: 0 0 6px 0; }
+  .subtitle { font-size: 13px; color: #94a3b8; margin: 0; }
+
+  .header-right { display: flex; gap: 24px; align-items: center; }
+}
+
+.stats-pill {
+  display: flex;
+  align-items: center;
+  background: rgba(15, 23, 42, 0.4);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 12px;
+  padding: 10px 20px;
+  gap: 20px;
+  font-size: 13px;
+
+  .stats-icon { font-size: 18px; color: #38bdf8; }
+  .stat-item {
+    display: flex; align-items: center; gap: 8px; color: #cbd5e1;
+    .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      &.active-dot { background: #10b981; box-shadow: 0 0 10px #10b981; }
+      &.disabled-dot { background: #ef4444; box-shadow: 0 0 10px #ef4444; }
+      &.pending-dot { background: #f59e0b; box-shadow: 0 0 10px #f59e0b; }
+    }
+  }
+}
+
+.btn-create {
+  background: linear-gradient(135deg, #0ea5e9, #38bdf8);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(14, 165, 233, 0.4);
+  transition: all 0.3s;
+  &:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(14, 165, 233, 0.6); }
+}
+
+/* Filter Bar */
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: rgba(26, 32, 53, 0.4);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: 16px;
+  padding: 14px 20px;
+  margin-bottom: 24px;
+
+  .filter-label { display: flex; align-items: center; gap: 8px; color: #38bdf8; font-weight: 600; font-size: 14px; }
+}
+
+.search-input-wrap {
+  flex: 1; position: relative;
+  .search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #64748b; }
+  .search-input {
+    width: 100%; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: 10px; padding: 10px 16px 10px 45px; color: #fff; font-size: 14px; outline: none;
+    &:focus { border-color: #38bdf8; box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.1); }
+  }
+}
+
+.cyber-select {
+  width: 160px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 10px; color: #fff; padding: 10px 16px; font-size: 13px; outline: none; cursor: pointer;
+  &:hover { border-color: #38bdf8; }
+}
+
+/* Task Cards */
+.task-list { display: flex; flex-direction: column; gap: 16px; }
+
+.task-card {
+  background: rgba(30, 41, 59, 0.3);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: 20px;
+  padding: 24px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  &:hover {
+    background: rgba(30, 41, 59, 0.5);
+    border-color: rgba(56, 189, 248, 0.3);
+    transform: translateX(4px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.task-info {
+  .task-name-row {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 8px;
+    .status-indicator { width: 10px; height: 10px; border-radius: 50%; }
+    .task-name { margin: 0; font-size: 20px; font-weight: 700; color: #f8fafc; }
+  }
+  .task-meta {
+    display: flex; align-items: center; gap: 12px; font-size: 13px; color: #64748b;
+    .meta-item { font-family: monospace; font-weight: 600; color: #94a3b8; }
+    .camera-info { color: #38bdf8; display: flex; align-items: center; gap: 6px; font-weight: 600; font-family: 'Inter', sans-serif; }
+    .meta-divider { color: rgba(148, 163, 184, 0.2); }
+  }
+}
+
+.task-actions {
+  display: flex; align-items: center; gap: 24px;
+  .status-badge {
+    padding: 6px 18px; border-radius: 30px; font-size: 11px; font-weight: 800; text-transform: uppercase;
+    &.active { color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); background: rgba(16, 185, 129, 0.1); }
+    &.pending-approval { color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); background: rgba(245, 158, 11, 0.1); }
+    &.disabled { color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.1); }
+  }
+  .btn-group { display: flex; gap: 12px; }
+}
+
+.action-btn {
+  display: flex; align-items: center; gap: 8px; background: rgba(30, 41, 59, 0.5);
+  border: 1px solid rgba(148, 163, 184, 0.15); border-radius: 10px; padding: 10px 18px;
+  font-size: 13px; color: #cbd5e1; cursor: pointer; transition: 0.2s;
+  &:hover { border-color: #38bdf8; color: #fff; background: rgba(56, 189, 248, 0.1); }
+  &.btn-delete:hover { background: #ef4444; color: #fff; border-color: #ef4444; }
+}
+
+/* Custom Pagination Styling */
+.cyber-pagination {
+  margin-top: 24px;
+  display: flex;
+  justify-content: flex-end;
+  padding-bottom: 20px;
+
+  :deep(.el-pagination) {
+    --el-pagination-bg-color: rgba(30, 41, 59, 0.4);
+    --el-pagination-text-color: #94a3b8;
+    --el-pagination-button-color: #94a3b8;
+    --el-pagination-hover-color: #38bdf8;
+    
+    .el-pagination__total, .el-pagination__jump {
+      color: #64748b;
+    }
+    
+    .el-input__wrapper {
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      box-shadow: none;
+      .el-input__inner { color: #cbd5e1; }
+    }
+
+    .el-pager li {
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid rgba(148, 163, 184, 0.1);
+      border-radius: 6px;
+      margin: 0 4px;
+      font-weight: 600;
+      &.is-active {
+        background: rgba(14, 165, 233, 0.2);
+        border-color: #38bdf8;
+        color: #38bdf8;
+      }
+      &:hover { color: #38bdf8; }
+    }
+    
+    .btn-prev, .btn-next {
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid rgba(148, 163, 184, 0.1);
+      border-radius: 6px;
+      margin: 0 4px;
+      &:hover { color: #38bdf8; }
+      &:disabled { background: rgba(15, 23, 42, 0.4); color: #475569; border-color: transparent; }
+    }
+  }
+}
 
 /* Wizard Styling - Essential Fixing without append-to-body */
 :deep(.task-add-dialog-custom) {

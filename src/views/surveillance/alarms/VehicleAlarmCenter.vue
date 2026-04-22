@@ -73,6 +73,11 @@ const activeTab = ref('All Status')
 defineProps<{
   hideTitle?: boolean
 }>()
+
+// Pagination state
+const currentPage = ref(1)
+const pageSize = ref(10)
+const totalTasks = ref(5)
 </script>
 
 <template>
@@ -207,14 +212,16 @@ defineProps<{
       </div>
 
       <!-- Footer Pagination -->
-      <footer class="pagination-area">
-        <div class="showing-count">Showing 1 to 5 of 5 alarms</div>
-        <div class="pager-btns">
-          <button class="btn-pager">Previous</button>
-          <button class="btn-pager active">1</button>
-          <button class="btn-pager">Next</button>
-        </div>
-      </footer>
+      <div class="cyber-pagination">
+        <el-pagination
+          v-model:current-page="currentPage"
+          v-model:page-size="pageSize"
+          :page-sizes="[10, 20, 50]"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="totalTasks"
+          background
+        />
+      </div>
     </main>
   </div>
 </template>
@@ -534,32 +541,51 @@ defineProps<{
 }
 
 /* Pagination */
-.pagination-area {
+.cyber-pagination {
   margin-top: 24px;
-  padding: 16px 0;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 12px;
-  color: #64748b;
-  border-top: 1px solid rgba(148, 163, 184, 0.08);
-}
+  justify-content: flex-end;
+  padding-bottom: 20px;
 
-.pager-btns {
-  display: flex;
-  gap: 8px;
+  :deep(.el-pagination) {
+    --el-pagination-bg-color: rgba(30, 41, 59, 0.4);
+    --el-pagination-text-color: #94a3b8;
+    --el-pagination-button-color: #94a3b8;
+    --el-pagination-hover-color: #38bdf8;
+    
+    .el-pagination__total, .el-pagination__jump {
+      color: #64748b;
+    }
+    
+    .el-input__wrapper {
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      box-shadow: none;
+      .el-input__inner { color: #cbd5e1; }
+    }
 
-  .btn-pager {
-    background: rgba(30, 41, 59, 0.3);
-    border: 1px solid rgba(148, 163, 184, 0.15);
-    color: #94a3b8;
-    padding: 6px 12px;
-    border-radius: 6px;
-    font-size: 11px;
-    cursor: pointer;
-    transition: all 0.2s;
-    &.active { background: #38bdf8; border-color: #38bdf8; color: #020617; font-weight: 700; }
-    &:hover:not(.active) { background: rgba(56, 189, 248, 0.1); color: #fff; border-color: #38bdf8; }
+    .el-pager li {
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid rgba(148, 163, 184, 0.1);
+      border-radius: 6px;
+      margin: 0 4px;
+      font-weight: 600;
+      &.is-active {
+        background: rgba(14, 165, 233, 0.2);
+        border-color: #38bdf8;
+        color: #38bdf8;
+      }
+      &:hover { color: #38bdf8; }
+    }
+    
+    .btn-prev, .btn-next {
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid rgba(148, 163, 184, 0.1);
+      border-radius: 6px;
+      margin: 0 4px;
+      &:hover { color: #38bdf8; }
+      &:disabled { background: rgba(15, 23, 42, 0.4); color: #475569; border-color: transparent; }
+    }
   }
 }
 </style>

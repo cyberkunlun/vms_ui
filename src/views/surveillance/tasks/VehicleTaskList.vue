@@ -89,6 +89,11 @@ const handleEdit = (task: VehicleTask) => {
   form.type = task.type
   dialogVisible.value = true
 }
+
+// Pagination state
+const currentPage = ref(1)
+const pageSize = ref(10)
+const totalTasks = ref(38)
 </script>
 
 <template>
@@ -193,6 +198,18 @@ const handleEdit = (task: VehicleTask) => {
           </div>
         </div>
       </article>
+    </div>
+
+    <!-- Pagination -->
+    <div class="cyber-pagination">
+      <el-pagination
+        v-model:current-page="currentPage"
+        v-model:page-size="pageSize"
+        :page-sizes="[10, 20, 50]"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="totalTasks"
+        background
+      />
     </div>
 
     <!-- Unified Add/Edit Dialog -->
@@ -457,6 +474,55 @@ const handleEdit = (task: VehicleTask) => {
   font-size: 13px; color: #cbd5e1; cursor: pointer; transition: 0.2s;
   &:hover { border-color: #38bdf8; color: #fff; background: rgba(56, 189, 248, 0.1); }
   &.btn-delete:hover { background: #ef4444; color: #fff; border-color: #ef4444; }
+}
+
+/* Custom Pagination Styling */
+.cyber-pagination {
+  margin-top: 24px;
+  display: flex;
+  justify-content: flex-end;
+  padding-bottom: 20px;
+
+  :deep(.el-pagination) {
+    --el-pagination-bg-color: rgba(30, 41, 59, 0.4);
+    --el-pagination-text-color: #94a3b8;
+    --el-pagination-button-color: #94a3b8;
+    --el-pagination-hover-color: #38bdf8;
+    
+    .el-pagination__total, .el-pagination__jump {
+      color: #64748b;
+    }
+    
+    .el-input__wrapper {
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      box-shadow: none;
+      .el-input__inner { color: #cbd5e1; }
+    }
+
+    .el-pager li {
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid rgba(148, 163, 184, 0.1);
+      border-radius: 6px;
+      margin: 0 4px;
+      font-weight: 600;
+      &.is-active {
+        background: rgba(14, 165, 233, 0.2);
+        border-color: #38bdf8;
+        color: #38bdf8;
+      }
+      &:hover { color: #38bdf8; }
+    }
+    
+    .btn-prev, .btn-next {
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid rgba(148, 163, 184, 0.1);
+      border-radius: 6px;
+      margin: 0 4px;
+      &:hover { color: #38bdf8; }
+      &:disabled { background: rgba(15, 23, 42, 0.4); color: #475569; border-color: transparent; }
+    }
+  }
 }
 
 /* Dialog Styling */
