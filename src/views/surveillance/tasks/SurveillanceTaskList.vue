@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
+import CameraSelectionMap from '@/components/CameraSelectionMap.vue'
 import {
   Search,
   Plus,
@@ -74,6 +75,12 @@ const prevStep = () => {
 const currentPage = ref(1)
 const pageSize = ref(10)
 const totalTasks = ref(45)
+
+// Selected camera count state
+const selectedCameraCount = ref(0)
+const handleSelectionChange = (count: number) => {
+  selectedCameraCount.value = count
+}
 </script>
 
 <template>
@@ -148,7 +155,7 @@ const totalTasks = ref(45)
     <!-- The Wizard Dialog -->
     <el-dialog
       v-model="dialogVisible"
-      width="1000px"
+      width="1200px"
       class="task-add-dialog-custom"
       destroy-on-close
       :show-close="false"
@@ -236,13 +243,11 @@ const totalTasks = ref(45)
               </el-form>
 
               <!-- Step 2: Map/Deployment -->
-              <div class="map-view-area" v-if="activeStep === 2">
-                <div class="map-stats-overlay">
-                   <div class="stat-box"><span class="l">Selected Nodes</span><span class="v">12</span></div>
-                   <div class="stat-box active"><span class="l">Total Cameras</span><span class="v">54</span></div>
-                </div>
-                <img src="https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&w=1000&q=80" alt="Map" />
-                <button class="map-btn">Interaction Mode: Polygon Select</button>
+              <div v-if="activeStep === 2" style="height: 400px;">
+                <CameraSelectionMap 
+                  :visible="activeStep === 2 && dialogVisible" 
+                  @selection-change="handleSelectionChange" 
+                />
               </div>
 
               <!-- Step 3: Collaboration -->
@@ -516,12 +521,6 @@ const totalTasks = ref(45)
 .drop-zone { border: 2px dashed #1f2937; border-radius: 12px; padding: 40px; text-align: center; cursor: pointer; transition: 0.2s; &:hover { border-color: #38bdf8; background: rgba(56, 189, 248, 0.05); } .icon { font-size: 32px; color: #4b5563; margin-bottom: 12px; } p { color: #94a3b8; font-size: 13px; } }
 .slider-wrap { display: flex; align-items: center; gap: 16px; .val { color: #38bdf8; font-weight: bold; width: 40px; } :deep(.el-slider) { flex: 1; } }
 
-.map-view-area {
-  height: 100%; border-radius: 16px; overflow: hidden; position: relative; border: 1px solid #1f2937;
-  img { width: 100%; height: 100%; object-fit: cover; opacity: 0.6; }
-  .map-stats-overlay { position: absolute; top: 12px; left: 12px; display: flex; gap: 12px; .stat-box { background: rgba(0,0,0,0.8); padding: 8px 16px; border-radius: 8px; border: 1px solid #1f2937; display: flex; flex-direction: column; .l { font-size: 10px; color: #64748b; } .v { font-size: 14px; color: #f3f4f6; font-weight: bold; } &.active { border-color: #38bdf8; .v { color: #38bdf8; } } } }
-  .map-btn { position: absolute; bottom: 12px; right: 12px; background: #38bdf8; color: #000; border: none; padding: 8px 16px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; }
-}
 
 .wizard-footer {
   margin-top: 32px; padding-top: 24px; border-top: 1px solid #1f2937; display: flex; align-items: center;

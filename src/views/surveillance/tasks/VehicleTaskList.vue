@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
+import CameraSelectionMap from '@/components/CameraSelectionMap.vue'
 import {
   Search,
   Plus,
@@ -74,8 +75,13 @@ const form = reactive({
   plates: '',
   type: 'Short-term',
   dateRange: [],
-  remark: ''
+  remark: '',
+  selectedCameras: 0
 })
+
+const handleSelectionChange = (count: number) => {
+  form.selectedCameras = count
+}
 
 const handleAdd = () => {
   dialogTitle.value = 'Create New Vehicle Task'
@@ -216,7 +222,7 @@ const totalTasks = ref(38)
     <el-dialog
       v-model="dialogVisible"
       :title="dialogTitle"
-      width="1100px"
+      width="1200px"
       class="cyber-dialog-premium"
       destroy-on-close
     >
@@ -274,37 +280,10 @@ const totalTasks = ref(38)
           </div>
           
           <div class="map-container">
-            <!-- Map Visualization -->
-            <div class="map-view">
-              <div class="map-controls">
-                <div class="search-box">
-                  <el-icon><Search /></el-icon>
-                  <input type="text" placeholder="Locality or Road..." />
-                </div>
-              </div>
-              <img src="https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&w=1200&q=80" alt="GIS Data" />
-              
-              <!-- Floating Map UI -->
-              <div class="map-stats-overlay">
-                <div class="badge-item">
-                  <span class="label">Total Nodes</span>
-                  <span class="val">420</span>
-                </div>
-                <div class="divider"></div>
-                <div class="badge-item active">
-                  <span class="label">Selected</span>
-                  <span class="val">18</span>
-                </div>
-              </div>
-            </div>
-            
-            <div class="map-footer">
-              <div class="selection-tools">
-                <button class="tool-btn"><el-icon><Compass /></el-icon> Area Select</button>
-                <button class="tool-btn"><el-icon><VideoCamera /></el-icon> Route Select</button>
-              </div>
-              <button class="btn-clear text-btn">Clear All</button>
-            </div>
+            <CameraSelectionMap 
+              :visible="dialogVisible" 
+              @selection-change="handleSelectionChange" 
+            />
           </div>
         </div>
       </div>
@@ -552,46 +531,10 @@ const totalTasks = ref(38)
   }
 }
 
-.map-selection-section { width: 550px; display: flex; flex-direction: column; gap: 24px; }
+.map-selection-section { width: 650px; display: flex; flex-direction: column; gap: 24px; }
 .map-container { flex: 1; display: flex; flex-direction: column; gap: 16px; }
 
-.map-view {
-  flex: 1; border-radius: 20px; overflow: hidden; position: relative; border: 1px solid rgba(148, 163, 184, 0.2);
-  img { width: 100%; height: 100%; object-fit: cover; opacity: 0.6; }
-}
 
-.map-controls {
-  position: absolute; top: 16px; left: 16px; width: 240px; z-index: 10;
-  .search-box {
-    display: flex; align-items: center; gap: 10px; background: rgba(15, 23, 42, 0.8);
-    backdrop-filter: blur(8px); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 30px; padding: 8px 16px;
-    .el-icon { color: #64748b; }
-    input { background: transparent; border: none; color: #fff; font-size: 13px; outline: none; width: 100%; }
-  }
-}
-
-.map-stats-overlay {
-  position: absolute; bottom: 16px; right: 16px; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(10px);
-  border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 16px; padding: 12px 20px; display: flex; gap: 20px; align-items: center;
-  .badge-item {
-    display: flex; flex-direction: column; gap: 2px;
-    .label { font-size: 10px; color: #64748b; text-transform: uppercase; }
-    .val { font-size: 16px; font-weight: 700; color: #f1f5f9; }
-    &.active .val { color: #38bdf8; text-shadow: 0 0 10px rgba(56, 189, 248, 0.4); }
-  }
-  .divider { width: 1px; height: 24px; background: rgba(148, 163, 184, 0.2); }
-}
-
-.map-footer {
-  display: flex; justify-content: space-between; align-items: center;
-  .selection-tools { display: flex; gap: 12px; }
-  .tool-btn {
-    background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 8px;
-    padding: 8px 16px; color: #cbd5e1; font-size: 12px; display: flex; align-items: center; gap: 8px; cursor: pointer;
-    &:hover { border-color: #38bdf8; color: #fff; }
-  }
-  .btn-clear { color: #64748b; font-size: 12px; background: none; border: none; cursor: pointer; &:hover { color: #ef4444; } }
-}
 
 /* Footer Actions */
 .premium-footer {
