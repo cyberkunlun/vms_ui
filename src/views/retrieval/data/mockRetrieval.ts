@@ -4,7 +4,10 @@ export const MOCK_PANORAMA =
   'https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?auto=format&fit=crop&w=1200&q=80'
 export const MOCK_CROP = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80'
 export const MOCK_FACE_THUMB = 'https://images.unsplash.com/photo-1599566150163-4ae9d7d7d0c5?auto=format&fit=crop&w=200&q=80'
+export const MOCK_FACE_THUMB2 = 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=80'
+export const MOCK_FACE_THUMB3 = 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&q=80'
 export const MOCK_BODY_THUMB = 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=200&q=80'
+export const MOCK_BODY_THUMB2 = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80'
 export const MOCK_VEHICLE = 'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=800&q=80'
 export const MOCK_PLATE_CLOSE = 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=400&q=80'
 export const MOCK_NONMOTOR = 'https://images.unsplash.com/photo-1571068316344-75bc76f77890?auto=format&fit=crop&w=600&q=80'
@@ -23,7 +26,11 @@ const DEVICES = [
   'Cam-School-Gate-S',
   'LPR-Tunnel-Out-7',
   'Face-Office-Lobby',
-  'Cam-Riverside-Walk'
+  'Cam-Riverside-Walk',
+  'Cam-Airport-T1-Arrival',
+  'Face-Airport-T2-Checkin',
+  'PTZ-Airport-P1-Exit',
+  'LPR-Airport-Link-5'
 ]
 
 const STREETS = [
@@ -41,7 +48,11 @@ const STREETS = [
   'Xincun Road market',
   'Hailun Road metro plaza',
   'Siping Road IT park',
-  'Gonghexin Rd residential'
+  'Gonghexin Rd residential',
+  'Airport Terminal 1 Arrival Hall',
+  'Airport Terminal 2 Departure Level',
+  'Airport VIP Lounge Entrance',
+  'Airport Parking Garage P1'
 ]
 
 function padNum(n: number, w: number) {
@@ -84,14 +95,17 @@ export interface CaptureHit {
   cropUrl: string
   faceAttrs: Record<string, string>
   bodyAttrs: Record<string, string>
-  realName: string
-  idCard: string
-  family: { relation: string; name: string; idMask: string }[]
-  vehicleLinks: { plate: string; relation: string }[]
-  /** At least 5 real-identity library hits for this face capture, high → low */
+  realName?: string
+  idCard?: string
   identityMatches: IdentityMatch[]
-  /** Structured household for the graph view (center = selected id match) */
   familyGraph: FamilyGraphData
+  family: { relation: string; name: string; idMask: string }[]
+  companions?: { 
+    name: string; 
+    relation: string; 
+    candidates: IdentityMatch[] 
+  }[]
+  vehicleLinks: { plate: string; relation: string }[]
 }
 
 const ID_LIBS = [
@@ -180,7 +194,9 @@ function oneCapture(i: number): CaptureHit {
     lonLat: [lon, lat],
     type,
     panoramaUrl: MOCK_PANORAMA,
-    cropUrl: type === 'body' ? MOCK_BODY_THUMB : MOCK_FACE_THUMB,
+    cropUrl: type === 'body' 
+      ? (i % 2 === 0 ? MOCK_BODY_THUMB : MOCK_BODY_THUMB2) 
+      : (i % 3 === 0 ? MOCK_FACE_THUMB : i % 3 === 1 ? MOCK_FACE_THUMB2 : MOCK_FACE_THUMB3),
     faceAttrs: {
       Gender: i % 2 ? 'Male' : 'Female',
       'Age group': ['Child', 'Young', 'Middle', 'Senior'][i % 4]!,
@@ -207,6 +223,28 @@ function oneCapture(i: number): CaptureHit {
         : i % 4 === 1
           ? [{ relation: 'Parent', name: 'Wang*', idMask: '320***********88' }]
           : familyGraph.members.slice(0, 3).map((m) => ({ relation: m.relation, name: m.name, idMask: m.idMask })),
+    companions: [
+      { 
+        name: 'Ahmed*Ali', 
+        relation: 'High Frequency', 
+        candidates: buildIdentityMatches(i + 10).map(m => ({...m, name: m.name.replace('Zhang', 'Ali')})) 
+      },
+      { 
+        name: 'Saif*Hassan', 
+        relation: 'Colleague', 
+        candidates: buildIdentityMatches(i + 20).map(m => ({...m, name: m.name.replace('Zhang', 'Hassan')})) 
+      },
+      { 
+        name: 'Fatima*Omar', 
+        relation: 'Friend', 
+        candidates: buildIdentityMatches(i + 30).map(m => ({...m, name: m.name.replace('Zhang', 'Omar')})) 
+      },
+      { 
+        name: 'Salem*Khalfan', 
+        relation: 'Unknown', 
+        candidates: buildIdentityMatches(i + 40).map(m => ({...m, name: m.name.replace('Zhang', 'Khalfan')})) 
+      }
+    ],
     vehicleLinks: [
       { plate: plates[i % plates.length]!, relation: i % 2 ? 'Registered owner' : 'Fleet / company' }
     ]
