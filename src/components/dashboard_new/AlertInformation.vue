@@ -11,7 +11,7 @@ const alerts = [
 </script>
 
 <template>
-  <PanelBox title="Alert Information" badge="226">
+  <PanelBox title="Real-time Alerts" badge="226">
     <div class="tabs">
       <div class="tab active">All</div>
       <div class="tab">Weather</div>

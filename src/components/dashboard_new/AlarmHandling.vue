@@ -59,7 +59,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <PanelBox title="Alarm Handling">
+  <PanelBox title="Device Status">
     <div class="rows">
       <div v-for="(r, i) in rows" :key="i" class="row">
         <div class="info">
