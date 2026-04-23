@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed, watch, nextTick } from 'vue'
 import Dashboard from './views/Dashboard.vue'
+import OmanCommandCenter from './components/dashboard_new/OmanCommandCenter.vue'
+
 import CaseHandlingDashboard from './views/CaseHandlingDashboard.vue'
 import EventWarning from './views/EventWarning.vue'
 import Realtime from './views/Realtime.vue'
@@ -47,6 +49,7 @@ import {
 const menuItems = [
   { id: 'home', icon: House, label: 'Home', component: CaseHandlingDashboard },
   { id: 'dashboard', icon: DataLine, label: 'Dashboard', component: Dashboard },
+  { id: 'dashboard2', icon: DataLine, label: 'Dashboard2', component: OmanCommandCenter },
   { 
     id: 'vms', 
     icon: VideoCamera, 
@@ -461,7 +464,7 @@ const showAlertPanel = () => {
           </div>
         </div>
       </header>
-      <div class="view-shell">
+      <div class="view-shell" :class="{ 'view-shell-dashboard2': currentView === 'dashboard2', 'view-shell-dashboard': currentView === 'dashboard' }">
         <transition name="fade-slide" mode="out-in">
           <component :is="currentComponent" :key="currentView" :initialTab="currentViewTab" />
         </transition>
@@ -516,7 +519,6 @@ body {
   overflow: hidden;
   background: #0b1120;
 }
-
 /* ========== 侧边栏样式 ========== */
 .sidebar {
   width: 260px;
@@ -837,6 +839,13 @@ body {
   border-radius: 24px;
   backdrop-filter: blur(2px);
   padding: 20px 24px;
+}
+.view-shell-dashboard2,
+.view-shell-dashboard {
+  overflow: hidden;
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
 }
 .view-shell::-webkit-scrollbar {
   width: 4px;
