@@ -111,14 +111,14 @@ const allFuncCards = ref<FuncCard[]>([])
 
 // 分页相关
 const currentPage = ref(0)
-const pageSize = ref(4) // 默认每页4个卡片（2x2）
+const pageSize = ref(2) // 默认每页4个卡片（2x2）
 
 // 根据屏幕宽度调整每页数量
 const updatePageSize = () => {
   const width = window.innerWidth
   if (width < 640) pageSize.value = 2
   else if (width < 900) pageSize.value = 3
-  else pageSize.value = 4
+  else pageSize.value = 2
 }
 
 const totalPages = computed(() => Math.ceil(allFuncCards.value.length / pageSize.value))

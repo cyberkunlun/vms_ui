@@ -711,7 +711,7 @@ body {
   background: rgba(8, 12, 24, 0.3);
   border-radius: 24px;
   backdrop-filter: blur(2px);
-  padding: 20px 24px;
+  padding: 6px 6px;
 }
 .view-shell::-webkit-scrollbar {
   width: 4px;
