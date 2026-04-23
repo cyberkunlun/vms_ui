@@ -116,11 +116,6 @@ onBeforeUnmount(() => {
     <div class="hud bl"><span class="hud-bracket bl"></span><span class="hud-txt">SCALE 1:2,500,000</span></div>
     <div class="hud br"><span class="hud-bracket br"></span><span class="hud-txt">UTM 40Q</span></div>
 
-    <!-- Live status -->
-    <div class="live-tag">
-      <span class="live-dot"></span>
-      <span>LIVE</span>
-    </div>
   </div>
 </template>
 
@@ -305,36 +300,4 @@ onBeforeUnmount(() => {
   border: 1px solid rgba(100, 160, 255, 0.14);
 }
 
-/* ─── Live tag ─── */
-.live-tag {
-  position: absolute;
-  top: 12px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 8;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 3px 10px;
-  background: rgba(2, 8, 22, 0.6);
-  border: 1px solid rgba(100, 160, 255, 0.2);
-  border-radius: 2px;
-  pointer-events: none;
-  backdrop-filter: blur(4px);
-  font-size: 9.5px;
-  letter-spacing: 0.14em;
-  color: rgba(200, 235, 255, 0.75);
-  font-family: 'Consolas', monospace;
-}
-
-.live-dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: #4cffb8;
-  box-shadow: 0 0 6px #4cffb8;
-  animation: blink 1.8s ease-in-out infinite;
-}
-
-@keyframes blink { 50% { opacity: 0.3; } }
 </style>

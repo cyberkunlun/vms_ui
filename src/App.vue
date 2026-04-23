@@ -519,6 +519,10 @@ body {
   overflow: hidden;
   background: #0b1120;
 }
+.app-shell-immersive {
+  display: block;
+  background: #051225;
+}
 /* ========== 侧边栏样式 ========== */
 .sidebar {
   width: 260px;
@@ -663,6 +667,12 @@ body {
   gap: 4px;
   overflow: hidden;
   min-width: 0;
+}
+.main-immersive {
+  padding: 0;
+  gap: 0;
+  width: 100vw;
+  height: 100vh;
 }
 .topbar {
   display: flex;
@@ -841,11 +851,16 @@ body {
   padding: 20px 24px;
 }
 .view-shell-dashboard2,
+.view-shell-dashboard3,
 .view-shell-dashboard {
   overflow: hidden;
   padding: 0;
   background: transparent;
   border-radius: 0;
+}
+.view-shell-immersive {
+  width: 100vw;
+  height: 100vh;
 }
 .view-shell::-webkit-scrollbar {
   width: 4px;

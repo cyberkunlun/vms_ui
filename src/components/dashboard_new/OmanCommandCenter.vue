@@ -402,16 +402,16 @@ onBeforeUnmount(() => {
 .sys-sep   { width: 1px; height: 12px; background: var(--c-line); margin: 0 4px; }
 .sys-label { font-size: 9.5px; letter-spacing: .1em; color: var(--c-text); font-family: 'Consolas', monospace; text-transform: uppercase; }
 
-.top-title  { position: relative; display: flex; align-items: center; justify-content: center; gap: 12px; padding: 6px 16px; }
-.title-inner { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.top-title  { position: relative; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 4px 8px; width: 360px; max-width: 100%; justify-self: center; }
+.title-inner { display: flex; flex-direction: column; align-items: center; gap: 2px; max-width: 240px; }
 .top-title h1 {
-  margin: 0; font-size: clamp(18px, 1.5vw, 28px); font-weight: 600;
+  margin: 0; font-size: clamp(16px, 1.2vw, 22px); font-weight: 600;
   letter-spacing: .05em; white-space: nowrap; color: #eaf3ff;
   text-shadow: 0 0 30px rgba(116,180,255,.45), 0 0 60px rgba(116,180,255,.2);
 }
 .title-sub {
   display: flex; align-items: center; gap: 8px;
-  font-size: 9px; letter-spacing: .2em; color: rgba(180,214,255,.55);
+  font-size: 8px; letter-spacing: .16em; color: rgba(180,214,255,.55);
   font-family: 'Consolas', monospace; text-transform: uppercase;
 }
 .title-sub-dot {
@@ -420,7 +420,7 @@ onBeforeUnmount(() => {
   flex-shrink: 0; animation: blink 3s ease-in-out infinite;
 }
 .wedge {
-  width: 80px; height: 26px; opacity: .9; flex-shrink: 0;
+  width: 34px; height: 18px; opacity: .9; flex-shrink: 0;
   border-top: 1px solid rgba(124,176,255,.44);
   border-bottom: 1px solid rgba(124,176,255,.12);
   background: linear-gradient(90deg, transparent 0%, rgba(73,129,255,.22) 40%, transparent 100%);
@@ -477,21 +477,21 @@ onBeforeUnmount(() => {
 .dashboard-grid {
   position: relative; z-index: 2; flex: 1; min-height: 0;
   display: grid;
-  grid-template-columns: minmax(280px, 1fr) minmax(480px, 1.44fr) minmax(270px, .9fr);
+  grid-template-columns: minmax(248px, 0.84fr) minmax(560px, 1.62fr) minmax(236px, 0.74fr);
   gap: 8px;
 }
 /* Edit mode: shrink right area for settings panel */
 .edit-mode .dashboard-grid {
-  grid-template-columns: minmax(260px, 1fr) minmax(460px, 1.4fr) 272px;
+  grid-template-columns: minmax(238px, 0.82fr) minmax(540px, 1.58fr) 264px;
 }
 
 /* ─── Columns ─── */
 .left-column, .right-column {
   min-width: 0; min-height: 0; display: grid; gap: 8px;
 }
-.left-column  { grid-template-rows: 1.6fr .9fr .72fr; }
+.left-column  { grid-template-rows: 1.52fr .84fr .88fr; }
 /* right: 4 panels — give more even share, last two panels get enough room */
-.right-column { grid-template-rows: 1.1fr .88fr .72fr .88fr; }
+.right-column { grid-template-rows: 1.08fr .86fr .72fr .92fr; }
 
 .center-column {
   min-width: 0; min-height: 0; display: grid; gap: 8px;
@@ -687,12 +687,12 @@ onBeforeUnmount(() => {
 
 /* ─── Responsive ─── */
 @media (max-width: 1680px) {
-  .dashboard-grid { grid-template-columns: minmax(256px, .92fr) minmax(440px, 1.3fr) minmax(256px, .86fr); }
-  .edit-mode .dashboard-grid { grid-template-columns: minmax(248px, .92fr) minmax(420px, 1.3fr) 258px; }
+  .dashboard-grid { grid-template-columns: minmax(236px, .82fr) minmax(500px, 1.5fr) minmax(226px, .72fr); }
+  .edit-mode .dashboard-grid { grid-template-columns: minmax(228px, .8fr) minmax(488px, 1.48fr) 252px; }
 }
 @media (max-width: 1440px) {
-  .dashboard-grid { grid-template-columns: minmax(240px, .9fr) minmax(400px, 1.25fr) minmax(240px, .84fr); }
-  .edit-mode .dashboard-grid { grid-template-columns: minmax(234px, .9fr) minmax(390px, 1.25fr) 248px; }
+  .dashboard-grid { grid-template-columns: minmax(224px, .8fr) minmax(420px, 1.42fr) minmax(214px, .68fr); }
+  .edit-mode .dashboard-grid { grid-template-columns: minmax(218px, .78fr) minmax(410px, 1.38fr) 242px; }
 }
 @media (max-width: 1360px) {
   .occ-root { overflow: auto; }
