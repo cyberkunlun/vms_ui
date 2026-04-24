@@ -729,7 +729,7 @@ $body:     'Barlow', sans-serif;
 
 .lm-root {
   position: relative;
-  height: 86vh;
+  height: 89vh;
   display: flex;
   flex-direction: column;
   background: $bg;

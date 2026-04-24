@@ -412,7 +412,7 @@ $font-ui: 'Rajdhani', sans-serif;
 
 .vpr-root {
   position: relative;
-  height: 86vh;
+  height: 89vh;
   display: flex;
   background: $c-bg;
   color: $c-text;

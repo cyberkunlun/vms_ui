@@ -782,7 +782,7 @@ $body: 'Barlow', sans-serif;
 
 .video-wall-view {
   position: relative;
-  height: 86vh;
+  height: 89vh;
   display: flex;
   background: $bg;
   color: $text;
