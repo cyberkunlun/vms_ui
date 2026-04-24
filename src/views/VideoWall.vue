@@ -254,18 +254,18 @@ const generateCoordinates = (id: number, index: number): { lat: number; lng: num
 
 // ================== 摄像头数据（带坐标） ==================
 const cameras = ref<Camera[]>([
-  { id: 1, name: 'VIP Arrivals-24', ip: '10.7.17.24', status: 'online', location: 'MCT Airport', thumbnail: 'https://images.unsplash.com/photo-1557597774-9d2739f85a76?q=80&w=400&auto=format&fit=crop', lastUpdate: '2026-04-16', lat: 0, lng: 0 },
-  { id: 2, name: 'Transfer Domestic-26', ip: '10.7.17.26', status: 'online', location: 'MCT Airport', thumbnail: 'https://images.unsplash.com/photo-1542350327-4636dc45719b?q=80&w=400&auto=format&fit=crop', lastUpdate: '2026-04-16', lat: 0, lng: 0 },
-  { id: 3, name: 'Departure Domestic-50', ip: '10.7.17.50', status: 'online', location: 'MCT Airport', thumbnail: 'https://images.unsplash.com/photo-1590333746438-2834503f5573?q=80&w=400&auto=format&fit=crop', lastUpdate: '2026-04-16', lat: 0, lng: 0 },
-  { id: 4, name: 'Departure Employee-60', ip: '10.7.17.60', status: 'online', location: 'MCT Airport', thumbnail: 'https://images.unsplash.com/photo-1531058021387-39322098616e?q=80&w=400&auto=format&fit=crop', lastUpdate: '2026-04-16', lat: 0, lng: 0 },
-  { id: 5, name: 'Departure Economy Left-54', ip: '10.7.17.54', status: 'online', location: 'MCT Airport', thumbnail: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=400&auto=format&fit=crop', lastUpdate: '2026-04-16', lat: 0, lng: 0 },
-  { id: 6, name: 'Departure Economy Right-62', ip: '10.7.17.62', status: 'online', location: 'MCT Airport', thumbnail: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=400&auto=format&fit=crop', lastUpdate: '2026-04-16', lat: 0, lng: 0 },
-  { id: 7, name: 'Gate B Arrival Middle-58', ip: '10.7.17.58', status: 'online', location: 'MCT Airport', thumbnail: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=400&auto=format&fit=crop', lastUpdate: '2026-04-16', lat: 0, lng: 0 },
-  { id: 8, name: 'Departure Economy Middle-51', ip: '10.7.17.51', status: 'online', location: 'MCT Airport', thumbnail: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=400&auto=format&fit=crop', lastUpdate: '2026-04-16', lat: 0, lng: 0 },
-  { id: 9, name: 'Gate A Arrival Right-56', ip: '10.7.17.56', status: 'online', location: 'MCT Airport', thumbnail: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?q=80&w=400&auto=format&fit=crop', lastUpdate: '2026-04-16', lat: 0, lng: 0 },
-  { id: 10, name: 'Gate C3 Left-31', ip: '10.7.17.31', status: 'online', location: 'MCT Airport', thumbnail: 'https://images.unsplash.com/photo-1485965120184-e220f721d03e?q=80&w=400&auto=format&fit=crop', lastUpdate: '2026-04-16', lat: 0, lng: 0 },
-  { id: 11, name: 'Transfer Domestic to Intl-30', ip: '10.7.17.30', status: 'online', location: 'MCT Airport', thumbnail: 'https://images.unsplash.com/photo-1557597774-9d2739f85a76?q=80&w=400&auto=format&fit=crop', lastUpdate: '2026-04-16', lat: 0, lng: 0 },
-  { id: 12, name: 'Gate C3 Right-29', ip: '10.7.17.29', status: 'online', location: 'MCT Airport', thumbnail: 'https://images.unsplash.com/photo-1542350327-4636dc45719b?q=80&w=400&auto=format&fit=crop', lastUpdate: '2026-04-16', lat: 0, lng: 0 }
+  { id: 1, name: 'VIP Arrivals-24', ip: '10.7.17.24', status: 'online', location: 'MCT Airport', thumbnail: '', lastUpdate: '2026-04-16', lat: 0, lng: 0 },
+  { id: 2, name: 'Transfer Domestic-26', ip: '10.7.17.26', status: 'online', location: 'MCT Airport', thumbnail: 'images.unsplash.com/photo-1542350327-4636dc45719b?q=80&w=400&auto=format&fit=crop', lastUpdate: '2026-04-16', lat: 0, lng: 0 },
+  { id: 3, name: 'Departure Domestic-50', ip: '10.7.17.50', status: 'online', location: 'MCT Airport', thumbnail: 'images.unsplash.com/photo-1590333746438-2834503f5573?q=80&w=400&auto=format&fit=crop', lastUpdate: '2026-04-16', lat: 0, lng: 0 },
+  { id: 4, name: 'Departure Employee-60', ip: '10.7.17.60', status: 'online', location: 'MCT Airport', thumbnail: 'images.unsplash.com/photo-1531058021387-39322098616e?q=80&w=400&auto=format&fit=crop', lastUpdate: '2026-04-16', lat: 0, lng: 0 },
+  { id: 5, name: 'Departure Economy Left-54', ip: '10.7.17.54', status: 'online', location: 'MCT Airport', thumbnail: 'images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=400&auto=format&fit=crop', lastUpdate: '2026-04-16', lat: 0, lng: 0 },
+  { id: 6, name: 'Departure Economy Right-62', ip: '10.7.17.62', status: 'online', location: 'MCT Airport', thumbnail: 'images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=400&auto=format&fit=crop', lastUpdate: '2026-04-16', lat: 0, lng: 0 },
+  { id: 7, name: 'Gate B Arrival Middle-58', ip: '10.7.17.58', status: 'online', location: 'MCT Airport', thumbnail: 'images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=400&auto=format&fit=crop', lastUpdate: '2026-04-16', lat: 0, lng: 0 },
+  { id: 8, name: 'Departure Economy Middle-51', ip: '10.7.17.51', status: 'online', location: 'MCT Airport', thumbnail: 'images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=400&auto=format&fit=crop', lastUpdate: '2026-04-16', lat: 0, lng: 0 },
+  { id: 9, name: 'Gate A Arrival Right-56', ip: '10.7.17.56', status: 'online', location: 'MCT Airport', thumbnail: 'images.unsplash.com/photo-1533473359331-0135ef1b58bf?q=80&w=400&auto=format&fit=crop', lastUpdate: '2026-04-16', lat: 0, lng: 0 },
+  { id: 10, name: 'Gate C3 Left-31', ip: '10.7.17.31', status: 'online', location: 'MCT Airport', thumbnail: 'images.unsplash.com/photo-1485965120184-e220f721d03e?q=80&w=400&auto=format&fit=crop', lastUpdate: '2026-04-16', lat: 0, lng: 0 },
+  { id: 11, name: 'Transfer Domestic to Intl-30', ip: '10.7.17.30', status: 'online', location: 'MCT Airport', thumbnail: 'images.unsplash.com/photo-1557597774-9d2739f85a76?q=80&w=400&auto=format&fit=crop', lastUpdate: '2026-04-16', lat: 0, lng: 0 },
+  { id: 12, name: 'Gate C3 Right-29', ip: '10.7.17.29', status: 'online', location: 'MCT Airport', thumbnail: 'images.unsplash.com/photo-1542350327-4636dc45719b?q=80&w=400&auto=format&fit=crop', lastUpdate: '2026-04-16', lat: 0, lng: 0 }
 ])
 
 // 分配坐标
