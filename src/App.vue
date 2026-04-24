@@ -2,6 +2,7 @@
 import { ref, onMounted, onUnmounted, computed, watch, nextTick } from 'vue'
 import Dashboard from './views/Dashboard.vue'
 import OmanCommandCenter from './components/dashboard_new/OmanCommandCenter.vue'
+import OmanCommandCenter2 from './components/dashboard_new2/OmanCommandCenter.vue'
 
 import CaseHandlingDashboard from './views/CaseHandlingDashboard.vue'
 import EventWarning from './views/EventWarning.vue'
@@ -50,6 +51,7 @@ const menuItems = [
   { id: 'home', icon: House, label: 'Home', component: CaseHandlingDashboard },
   { id: 'dashboard', icon: DataLine, label: 'Dashboard', component: Dashboard },
   { id: 'dashboard2', icon: DataLine, label: 'Dashboard2', component: OmanCommandCenter },
+  { id: 'dashboard23', icon: DataLine, label: 'Dashboard23', component: OmanCommandCenter2 },
   { 
     id: 'vms', 
     icon: VideoCamera, 
