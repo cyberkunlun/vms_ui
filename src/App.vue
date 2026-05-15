@@ -6,6 +6,7 @@ import EventWarning from './views/EventWarning.vue'
 import LiveMonitor from './views/LiveMonitor.vue'
 import VideoPlayback from './views/VideoPlayback.vue'
 import VideoWall from './views/VideoWall.vue'
+import CameraView from './views/camera/CameraView.vue'
 
 // Element Plus icon components
 import {
@@ -73,6 +74,7 @@ const menuItems = [
   { id: 'monitor', icon: VideoCamera, label: '实时监控', component: LiveMonitor },
   { id: 'playback', icon: RefreshRight, label: '录像回放', component: VideoPlayback },
   { id: 'wall', icon: Grid, label: '视频墙', component: VideoWall },
+  { id: 'camera', icon: Location, label: '摄像头管理', component: CameraView },
   // 系统管理：带二级菜单
   { id: 'system', icon: Setting, label: '系统管理', children: systemSubMenus }
 ]
